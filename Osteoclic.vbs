@@ -63,13 +63,16 @@ End If
 ' --- Lancement du serveur PHP integre, cache, en recuperant son PID ---
 Dim command : command = q & phpExe & q & " -S " & HOST & ":" & PORT & " -t " & q & publicDir & q
 
-Dim wmi, startup, processObj, newPid
+Dim wmi, startup, processObj, newPid, rawPid
 Set wmi = GetObject("winmgmts:\\.\root\cimv2")
 Set startup = wmi.Get("Win32_ProcessStartup").SpawnInstance_()
 startup.ShowWindow = 0
 Set processObj = wmi.Get("Win32_Process")
-newPid = 0
-processObj.Create command, projectDir, startup, newPid
+rawPid = 0
+processObj.Create command, projectDir, startup, rawPid
+' Le PID renvoie par WMI (SWbemObjectEx) n'est pas toujours un type simple :
+' on le force explicitement en entier pour eviter un "Type incompatible" plus loin.
+newPid = CLng(rawPid)
 
 If newPid = 0 Then
     MsgBox "Le serveur PHP n'a pas pu demarrer.", vbCritical, "Osteoclic"
@@ -80,7 +83,7 @@ If Not fso.FolderExists(projectDir & "\var") Then
     fso.CreateFolder projectDir & "\var"
 End If
 Dim pidStream : Set pidStream = fso.CreateTextFile(pidFile, True)
-pidStream.WriteLine newPid
+pidStream.WriteLine CStr(newPid)
 pidStream.Close
 
 ' --- Attente que le serveur reponde, puis ouverture du navigateur ---
