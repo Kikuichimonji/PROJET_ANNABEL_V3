@@ -18,7 +18,7 @@ class PatientController extends AbstractController
      * @Route("/patient/{idc}", name="patient_add", defaults={"_fragment" = "consultation"})
      * @Route("/patient/{idc}/{id}", name="patient_edit", defaults={"_fragment" = "consultation"})
      */
-    public function addPatient(ManagerRegistry $doctrine, Patient $patient = null,Request $request,$idc = null,$err = null)
+    public function addPatient(ManagerRegistry $doctrine, Request $request, Patient $patient = null, $idc = null, $err = null)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $newPatient = 0;
@@ -84,7 +84,7 @@ class PatientController extends AbstractController
      * @Route("/DeletePatient/{idc}/{id}", name="patient_delete_cabinet")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function deletePatient(ManagerRegistry $doctrine, Patient $patient,$idc = 0,Request $request )
+    public function deletePatient(ManagerRegistry $doctrine, Request $request, Patient $patient, $idc = 0)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $entityManager = $doctrine->getManager();

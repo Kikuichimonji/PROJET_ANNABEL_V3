@@ -4,6 +4,7 @@ namespace App\Command;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -18,10 +19,9 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  * A lancer une seule fois, apres avoir cree le schema SQLite
  * (php bin/console doctrine:schema:create) et sauvegarde la base MySQL.
  */
+#[AsCommand(name: 'app:migrate-to-sqlite')]
 class MigrateToSqliteCommand extends Command
 {
-    protected static $defaultName = 'app:migrate-to-sqlite';
-
     /** @var Connection */
     private $sqlite;
 
@@ -72,7 +72,7 @@ class MigrateToSqliteCommand extends Command
 
         try {
             foreach ($orderedTables as $table) {
-                $existing = (int) $this->sqlite->fetchColumn("SELECT COUNT(*) FROM {$table}");
+                $existing = (int) $this->sqlite->fetchOne("SELECT COUNT(*) FROM {$table}");
                 if ($existing > 0 && !$input->getOption('force')) {
                     $io->error("La table '{$table}' contient deja {$existing} ligne(s). Relancez avec --force pour l'ecraser, apres verification.");
                     $this->sqlite->rollBack();
@@ -81,10 +81,10 @@ class MigrateToSqliteCommand extends Command
                 }
 
                 if ($existing > 0) {
-                    $this->sqlite->executeUpdate("DELETE FROM {$table}");
+                    $this->sqlite->executeStatement("DELETE FROM {$table}");
                 }
 
-                $rows = $mysql->fetchAll("SELECT * FROM `{$table}`");
+                $rows = $mysql->fetchAllAssociative("SELECT * FROM `{$table}`");
                 foreach ($rows as $row) {
                     $this->sqlite->insert($table, $row);
                 }
@@ -113,7 +113,7 @@ class MigrateToSqliteCommand extends Command
      */
     private function sortTablesByDependency(Connection $connection): array
     {
-        $schemaManager = $connection->getSchemaManager();
+        $schemaManager = $connection->createSchemaManager();
         $tables = array_values(array_filter(
             $schemaManager->listTableNames(),
             static function (string $table): bool {

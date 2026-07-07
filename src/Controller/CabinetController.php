@@ -34,7 +34,7 @@ class CabinetController extends AbstractController
      * @Route("/cabinet/Edit/{id}", name="admin_edit_cabinet")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function editUser(ManagerRegistry $doctrine, Cabinet $cabinet = null,Request $request)
+    public function editUser(ManagerRegistry $doctrine, Request $request, Cabinet $cabinet = null)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         if(!$cabinet)
