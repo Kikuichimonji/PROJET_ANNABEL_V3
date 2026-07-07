@@ -218,7 +218,12 @@ class Consultation
     }
 
     public function getTexte(){
-        return "Consultation du ".$this->date_consult->format("d/m/Y")." par ".$this->utilisateur->getUsername()." à : ".$this->cabinet->getLibelle();
+        $texte = "Consultation du ".$this->date_consult->format("d/m/Y")." par ".$this->utilisateur->getUsername();
+        if ($this->cabinet) {
+            $texte .= " à : ".$this->cabinet->getLibelle();
+        }
+
+        return $texte;
     }
 
     public function setTexte(String $texte = null){
