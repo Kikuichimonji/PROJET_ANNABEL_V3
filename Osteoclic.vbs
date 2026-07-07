@@ -35,14 +35,22 @@ If fso.FileExists(pidFile) Then
     End If
 End If
 
-' --- Localisation de php.exe (PATH, sinon installation Laragon par defaut) ---
+' --- Localisation de php.exe ---
+' Ce projet (Symfony 5.1 / Doctrine ORM 2.7) requiert PHP 7.x : PHP 8.3 (Laragon)
+' fait planter Doctrine. On privilegie donc l'installation PHP 7.4 dediee.
 Dim phpExe : phpExe = ""
 
-On Error Resume Next
-Dim whereResult : whereResult = shell.Exec("where php").StdOut.ReadAll()
-On Error Goto 0
-If InStr(whereResult, "php.exe") > 0 Then
-    phpExe = "php"
+If fso.FileExists("C:\tools\php74\php.exe") Then
+    phpExe = "C:\tools\php74\php.exe"
+End If
+
+If phpExe = "" Then
+    On Error Resume Next
+    Dim whereResult : whereResult = shell.Exec("where php").StdOut.ReadAll()
+    On Error Goto 0
+    If InStr(whereResult, "php.exe") > 0 Then
+        phpExe = "php"
+    End If
 End If
 
 If phpExe = "" And fso.FolderExists("C:\laragon\bin\php") Then
@@ -55,8 +63,8 @@ If phpExe = "" And fso.FolderExists("C:\laragon\bin\php") Then
 End If
 
 If phpExe = "" Then
-    MsgBox "Impossible de trouver php.exe (ni dans le PATH, ni dans C:\laragon\bin\php)." & vbCrLf & _
-           "Installez/reparez Laragon, ou ajoutez PHP au PATH Windows.", vbCritical, "Osteoclic"
+    MsgBox "Impossible de trouver php.exe (ni C:\tools\php74, ni le PATH, ni C:\laragon\bin\php)." & vbCrLf & _
+           "Installez PHP 7.4, ou ajoutez PHP au PATH Windows.", vbCritical, "Osteoclic"
     WScript.Quit 1
 End If
 
