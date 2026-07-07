@@ -77,10 +77,10 @@ If newPid = 0 Then
 End If
 
 If Not fso.FolderExists(projectDir & "\var") Then
-    fso.CreateFolder(projectDir & "\var")
+    fso.CreateFolder projectDir & "\var"
 End If
 Dim pidStream : Set pidStream = fso.CreateTextFile(pidFile, True)
-pidStream.WriteLine(newPid)
+pidStream.WriteLine newPid
 pidStream.Close
 
 ' --- Attente que le serveur reponde, puis ouverture du navigateur ---
