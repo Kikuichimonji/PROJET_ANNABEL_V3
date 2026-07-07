@@ -60,22 +60,32 @@ If phpExe = "" Then
     WScript.Quit 1
 End If
 
-' --- Lancement du serveur PHP integre, cache, en recuperant son PID ---
+' --- Lancement du serveur PHP integre, cache (WshShell.Run, methode standard) ---
 Dim command : command = q & phpExe & q & " -S " & HOST & ":" & PORT & " -t " & q & publicDir & q
+shell.CurrentDirectory = projectDir
+shell.Run command, 0, False
 
-Dim wmi, startup, processObj, newPid, rawPid
+' --- Recuperation du PID en cherchant le process php.exe qui sert notre dossier public ---
+' (plus fiable que le parametre ByRef de Win32_Process.Create, qui peut echouer silencieusement)
+Dim wmi, newPid, pidAttempts, processes, proc
 Set wmi = GetObject("winmgmts:\\.\root\cimv2")
-Set startup = wmi.Get("Win32_ProcessStartup").SpawnInstance_()
-startup.ShowWindow = 0
-Set processObj = wmi.Get("Win32_Process")
-rawPid = 0
-processObj.Create command, projectDir, startup, rawPid
-' Le PID renvoie par WMI (SWbemObjectEx) n'est pas toujours un type simple :
-' on le force explicitement en entier pour eviter un "Type incompatible" plus loin.
-newPid = CLng(rawPid)
+newPid = 0
+For pidAttempts = 1 To 15
+    WScript.Sleep 300
+    Set processes = wmi.ExecQuery("SELECT ProcessId, CommandLine FROM Win32_Process WHERE Name='php.exe'")
+    For Each proc In processes
+        If Not IsNull(proc.CommandLine) Then
+            If InStr(proc.CommandLine, publicDir) > 0 Then
+                newPid = proc.ProcessId
+            End If
+        End If
+    Next
+    If newPid <> 0 Then Exit For
+Next
 
 If newPid = 0 Then
-    MsgBox "Le serveur PHP n'a pas pu demarrer.", vbCritical, "Osteoclic"
+    MsgBox "Le serveur PHP n'a pas pu demarrer (introuvable apres lancement)." & vbCrLf & _
+           "Commande tentee : " & command, vbCritical, "Osteoclic"
     WScript.Quit 1
 End If
 
