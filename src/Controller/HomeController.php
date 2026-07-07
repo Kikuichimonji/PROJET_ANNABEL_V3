@@ -7,6 +7,7 @@ use App\Entity\Patient;
 use App\Data\SearchData;
 use App\Form\SearchType;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,7 +16,7 @@ class HomeController extends AbstractController
 {
     #[Route('/accueil', name: 'home')]
     #[Route('/accueil/{id}', name: 'home_detail')]
-    public function index(ManagerRegistry $doctrine, Request $request, Cabinet $cabinet = null)
+    public function index(ManagerRegistry $doctrine, Request $request, #[MapEntity] Cabinet $cabinet = null)
     {
         //Si l'utilisateur n'est pas autentifié il sera redirigé vers la page de connexion
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
@@ -38,7 +39,7 @@ class HomeController extends AbstractController
 
         //On initialise la pagination pour atterrir sur la page 1
         $data = new SearchData();
-        $data->page = $request->get('page', 1);
+        $data->page = $request->query->get('page', 1);
 
         //On initialise le formulaire de recherche pour la liste des patients
         $form = $this->createForm(SearchType::class, $data);

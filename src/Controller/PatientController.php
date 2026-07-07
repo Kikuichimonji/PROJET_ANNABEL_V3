@@ -7,6 +7,7 @@ use App\Entity\Patient;
 use App\Form\PatientType;
 use App\Entity\Utilisateur;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -16,7 +17,7 @@ class PatientController extends AbstractController
 {
     #[Route('/patient/{idc}', name: 'patient_add', defaults: ['_fragment' => 'consultation'])]
     #[Route('/patient/{idc}/{id}', name: 'patient_edit', defaults: ['_fragment' => 'consultation'])]
-    public function addPatient(ManagerRegistry $doctrine, Request $request, Patient $patient = null, $idc = null, $err = null)
+    public function addPatient(ManagerRegistry $doctrine, Request $request, #[MapEntity] Patient $patient = null, $idc = null, $err = null)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $newPatient = 0;

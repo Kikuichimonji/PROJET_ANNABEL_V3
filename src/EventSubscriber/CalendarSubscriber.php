@@ -3,9 +3,8 @@
 namespace App\EventSubscriber;
 
 use App\Repository\ConsultCalendarRepository;
-use CalendarBundle\CalendarEvents;
 use CalendarBundle\Entity\Event;
-use CalendarBundle\Event\CalendarEvent;
+use CalendarBundle\Event\SetDataEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -15,7 +14,7 @@ class CalendarSubscriber implements EventSubscriberInterface
     private $CalendarRepository;
     private $router;
 
-    public function __construct(ConsultCalendarRepository $CalendarRepository, UrlGeneratorInterface $router) 
+    public function __construct(ConsultCalendarRepository $CalendarRepository, UrlGeneratorInterface $router)
     {
         $this->CalendarRepository = $CalendarRepository;
         $this->router = $router;
@@ -23,11 +22,11 @@ class CalendarSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            CalendarEvents::SET_DATA => 'onCalendarSetData',
+            SetDataEvent::class => 'onCalendarSetData',
         ];
     }
 
-    public function onCalendarSetData(CalendarEvent $calendar)
+    public function onCalendarSetData(SetDataEvent $calendar)
     {
         $start = $calendar->getStart();
         $end = $calendar->getEnd();

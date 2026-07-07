@@ -36,12 +36,11 @@ If fso.FileExists(pidFile) Then
 End If
 
 ' --- Localisation de php.exe ---
-' Ce projet (Symfony 5.1 / Doctrine ORM 2.7) requiert PHP 7.x : PHP 8.3 (Laragon)
-' fait planter Doctrine. On privilegie donc l'installation PHP 7.4 dediee.
+' Le projet tourne desormais sur Symfony 7.4 / PHP 8.3 (migration terminee).
 Dim phpExe : phpExe = ""
 
-If fso.FileExists("C:\tools\php74\php.exe") Then
-    phpExe = "C:\tools\php74\php.exe"
+If fso.FileExists("C:\laragon\bin\php\php-8.3.30-Win32-vs16-x64\php.exe") Then
+    phpExe = "C:\laragon\bin\php\php-8.3.30-Win32-vs16-x64\php.exe"
 End If
 
 If phpExe = "" Then
@@ -63,8 +62,8 @@ If phpExe = "" And fso.FolderExists("C:\laragon\bin\php") Then
 End If
 
 If phpExe = "" Then
-    MsgBox "Impossible de trouver php.exe (ni C:\tools\php74, ni le PATH, ni C:\laragon\bin\php)." & vbCrLf & _
-           "Installez PHP 7.4, ou ajoutez PHP au PATH Windows.", vbCritical, "Osteoclic"
+    MsgBox "Impossible de trouver php.exe (ni C:\laragon\bin\php, ni le PATH)." & vbCrLf & _
+           "Installez PHP 8.3+, ou ajoutez PHP au PATH Windows.", vbCritical, "Osteoclic"
     WScript.Quit 1
 End If
 
