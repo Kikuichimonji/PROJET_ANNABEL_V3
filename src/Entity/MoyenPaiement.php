@@ -7,26 +7,18 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=MoyenPaiementRepository::class)
- */
+#[ORM\Entity(repositoryClass: MoyenPaiementRepository::class)]
 class MoyenPaiement
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=100)
-     */
+    #[ORM\Column(type: 'string', length: 100)]
     private $libelle;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Consultation::class, mappedBy="moyen_paiement")
-     */
+    #[ORM\OneToMany(targetEntity: Consultation::class, mappedBy: 'moyen_paiement')]
     private $consultations;
 
     public function __construct()

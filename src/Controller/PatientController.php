@@ -8,16 +8,14 @@ use App\Form\PatientType;
 use App\Entity\Utilisateur;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class PatientController extends AbstractController
 {
-    /**
-     * @Route("/patient/{idc}", name="patient_add", defaults={"_fragment" = "consultation"})
-     * @Route("/patient/{idc}/{id}", name="patient_edit", defaults={"_fragment" = "consultation"})
-     */
+    #[Route('/patient/{idc}', name: 'patient_add', defaults: ['_fragment' => 'consultation'])]
+    #[Route('/patient/{idc}/{id}', name: 'patient_edit', defaults: ['_fragment' => 'consultation'])]
     public function addPatient(ManagerRegistry $doctrine, Request $request, Patient $patient = null, $idc = null, $err = null)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
@@ -79,11 +77,9 @@ class PatientController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/DeletePatient/{id}", name="patient_delete_full")
-     * @Route("/DeletePatient/{idc}/{id}", name="patient_delete_cabinet")
-     * @IsGranted("ROLE_ADMIN")
-     */
+    #[Route('/DeletePatient/{id}', name: 'patient_delete_full')]
+    #[Route('/DeletePatient/{idc}/{id}', name: 'patient_delete_cabinet')]
+    #[IsGranted('ROLE_ADMIN')]
     public function deletePatient(ManagerRegistry $doctrine, Request $request, Patient $patient, $idc = 0)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');

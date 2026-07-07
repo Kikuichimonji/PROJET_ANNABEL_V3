@@ -7,31 +7,21 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=CabinetRepository::class)
- */
+#[ORM\Entity(repositoryClass: CabinetRepository::class)]
 class Cabinet
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=50)
-     */
+    #[ORM\Column(type: 'string', length: 50)]
     private $libelle;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=Patient::class, mappedBy="cabinet")
-     */
+    #[ORM\ManyToMany(targetEntity: Patient::class, mappedBy: 'cabinet')]
     private $patients;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Consultation::class, mappedBy="cabinet")
-     */
+    #[ORM\OneToMany(targetEntity: Consultation::class, mappedBy: 'cabinet')]
     private $consultations;
 
     public function __construct()

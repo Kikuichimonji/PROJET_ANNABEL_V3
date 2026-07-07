@@ -6,16 +6,14 @@ use App\Entity\Cabinet;
 use App\Form\CabinetType;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class CabinetController extends AbstractController
 {
-    /**
-     * @Route("/cabinet", name="admin_cabinet")
-     * @IsGranted("ROLE_ADMIN")
-     */
+    #[Route('/cabinet', name: 'admin_cabinet')]
+    #[IsGranted('ROLE_ADMIN')]
     public function index(ManagerRegistry $doctrine)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
@@ -29,11 +27,9 @@ class CabinetController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/cabinet/Edit", name="admin_add_cabinet")
-     * @Route("/cabinet/Edit/{id}", name="admin_edit_cabinet")
-     * @IsGranted("ROLE_ADMIN")
-     */
+    #[Route('/cabinet/Edit', name: 'admin_add_cabinet')]
+    #[Route('/cabinet/Edit/{id}', name: 'admin_edit_cabinet')]
+    #[IsGranted('ROLE_ADMIN')]
     public function editUser(ManagerRegistry $doctrine, Request $request, Cabinet $cabinet = null)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
@@ -62,10 +58,8 @@ class CabinetController extends AbstractController
     }
 
 
-    /**
-     * @Route("/cabinet/delete/{id}", name="admin_delete_cabinet")
-     * @IsGranted("ROLE_ADMIN")
-     */
+    #[Route('/cabinet/delete/{id}', name: 'admin_delete_cabinet')]
+    #[IsGranted('ROLE_ADMIN')]
     public function deleteUtilisateur(ManagerRegistry $doctrine, Cabinet $cabinet)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');

@@ -9,42 +9,30 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-/**
- * @ORM\Entity(repositoryClass=UtilisateurRepository::class)
- */
+#[ORM\Entity(repositoryClass: UtilisateurRepository::class)]
 class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=30)
-     */
+    #[ORM\Column(type: 'string', length: 30)]
     private $username;
 
     /**
      * @var string The hashed password
-     * @ORM\Column(type="string", length=255)
      */
+    #[ORM\Column(type: 'string', length: 255)]
     private $password;
 
-    /**
-     * @ORM\Column(type="json")
-     */
+    #[ORM\Column(type: 'json')]
     private $roles = [];
 
-    /**
-     * @ORM\OneToMany(targetEntity=Consultation::class, mappedBy="utilisateur")
-     */
+    #[ORM\OneToMany(targetEntity: Consultation::class, mappedBy: 'utilisateur')]
     private $consultations;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Patient::class, mappedBy="utilisateur")
-     */
+    #[ORM\OneToMany(targetEntity: Patient::class, mappedBy: 'utilisateur')]
     private $patients;
 
     public function __construct()
@@ -124,7 +112,7 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @see UserInterface
      */
-    public function eraseCredentials()
+    public function eraseCredentials(): void
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;

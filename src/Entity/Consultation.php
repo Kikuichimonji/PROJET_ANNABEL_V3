@@ -5,79 +5,51 @@ namespace App\Entity;
 use App\Repository\ConsultationRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=ConsultationRepository::class)
- */
+#[ORM\Entity(repositoryClass: ConsultationRepository::class)]
 class Consultation
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private $id;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
+    #[ORM\Column(type: 'datetime')]
     private $date_consult;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: 'text', nullable: true)]
     private $test;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: 'text', nullable: true)]
     private $traitement;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: 'text', nullable: true)]
     private $conseil;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: 'text', nullable: true)]
     private $note;
 
-    /**
-     * @ORM\Column(type="float", nullable=true)
-     */
+    #[ORM\Column(type: 'float', nullable: true)]
     private $montant;
 
-    /**
-     * @ORM\Column(type="string", length=50, nullable=true)
-     */
+    #[ORM\Column(type: 'string', length: 50, nullable: true)]
     private $numero_cheque;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Patient::class, inversedBy="consultations")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Patient::class, inversedBy: 'consultations')]
+    #[ORM\JoinColumn(nullable: false)]
     private $patient;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: 'text', nullable: true)]
     private $anamnese;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=MoyenPaiement::class, inversedBy="consultations")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: MoyenPaiement::class, inversedBy: 'consultations')]
+    #[ORM\JoinColumn(nullable: false)]
     private $moyen_paiement;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Utilisateur::class, inversedBy="consultations")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Utilisateur::class, inversedBy: 'consultations')]
+    #[ORM\JoinColumn(nullable: false)]
     private $utilisateur;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Cabinet::class, inversedBy="consultations")
-     */
+    #[ORM\ManyToOne(targetEntity: Cabinet::class, inversedBy: 'consultations')]
     private $cabinet;
 
     public function getId(): ?int

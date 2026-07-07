@@ -8,15 +8,13 @@ use App\Data\SearchData;
 use App\Form\SearchType;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class HomeController extends AbstractController
 {
-    /**
-     * @Route("/accueil", name="home")
-     * @Route("/accueil/{id}", name="home_detail")
-     */
+    #[Route('/accueil', name: 'home')]
+    #[Route('/accueil/{id}', name: 'home_detail')]
     public function index(ManagerRegistry $doctrine, Request $request, Cabinet $cabinet = null)
     {
         //Si l'utilisateur n'est pas autentifié il sera redirigé vers la page de connexion
