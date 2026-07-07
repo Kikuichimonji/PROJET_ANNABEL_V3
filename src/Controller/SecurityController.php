@@ -5,19 +5,20 @@ namespace App\Controller;
 use App\Entity\Cabinet;
 use App\Entity\Utilisateur;
 use App\Form\RegistrationFormType;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class SecurityController extends AbstractController
 {
     /**
      * @Route("/", name="app_login")
      */
-    public function login(AuthenticationUtils $authenticationUtils): Response
+    public function login(ManagerRegistry $doctrine, AuthenticationUtils $authenticationUtils): Response
     {
         // if ($this->getUser()) {
         //     return $this->redirectToRoute('target_path');
@@ -28,7 +29,7 @@ class SecurityController extends AbstractController
         // last username entered by the user
         $lastUsername = $authenticationUtils->getLastUsername();
 
-        $cabinet = $this->getDoctrine()
+        $cabinet = $doctrine
             ->getRepository(Cabinet::class)
             ->getAll();
 
@@ -51,10 +52,10 @@ class SecurityController extends AbstractController
     /**
      * @Route("/addUser", name="add_user")
      */
-    public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder): Response
+    public function register(ManagerRegistry $doctrine, Request $request, UserPasswordHasherInterface $passwordHasher): Response
     {
         $user = new Utilisateur();
-        
+
         $form = $this->createForm(RegistrationFormType::class, $user);
         if(!$this->isGranted('ROLE_ADMIN'))
             $form->remove("roles");
@@ -64,7 +65,7 @@ class SecurityController extends AbstractController
         if($form->isSubmitted() && $form->isValid())
         {
             $user->setPassword(
-                $passwordEncoder->encodePassword(
+                $passwordHasher->hashPassword(
                     $user,
                     $form->get("password")->getData()
                 )
@@ -72,7 +73,7 @@ class SecurityController extends AbstractController
             $user->setRoles( $form->get("roles")->getData());
         
 
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $doctrine->getManager();
             $entityManager->persist($user);
             $entityManager->flush();
 

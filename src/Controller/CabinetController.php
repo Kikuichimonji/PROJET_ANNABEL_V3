@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Cabinet;
 use App\Form\CabinetType;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -15,11 +16,11 @@ class CabinetController extends AbstractController
      * @Route("/cabinet", name="admin_cabinet")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function index()
+    public function index(ManagerRegistry $doctrine)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-        $cabinets = $this->getDoctrine()
+        $cabinets = $doctrine
         ->getRepository(Cabinet::class)
         ->getAll();
 
@@ -33,13 +34,13 @@ class CabinetController extends AbstractController
      * @Route("/cabinet/Edit/{id}", name="admin_edit_cabinet")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function editUser(Cabinet $cabinet = null,Request $request)
+    public function editUser(ManagerRegistry $doctrine, Cabinet $cabinet = null,Request $request)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         if(!$cabinet)
             $cabinet = new Cabinet();
 
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $doctrine->getManager();
 
         $form = $this->createForm(CabinetType::class,$cabinet);
         $form->handleRequest($request);
@@ -65,10 +66,10 @@ class CabinetController extends AbstractController
      * @Route("/cabinet/delete/{id}", name="admin_delete_cabinet")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function deleteUtilisateur(Cabinet $cabinet)
+    public function deleteUtilisateur(ManagerRegistry $doctrine, Cabinet $cabinet)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $doctrine->getManager();
         
         $entityManager->remove($cabinet);
         $entityManager->flush();

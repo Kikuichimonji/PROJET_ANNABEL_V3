@@ -6,6 +6,7 @@ use App\Entity\Cabinet;
 use App\Entity\Patient;
 use App\Form\PatientType;
 use App\Entity\Utilisateur;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -17,7 +18,7 @@ class PatientController extends AbstractController
      * @Route("/patient/{idc}", name="patient_add", defaults={"_fragment" = "consultation"})
      * @Route("/patient/{idc}/{id}", name="patient_edit", defaults={"_fragment" = "consultation"})
      */
-    public function addPatient(Patient $patient = null,Request $request,$idc = null,$err = null)
+    public function addPatient(ManagerRegistry $doctrine, Patient $patient = null,Request $request,$idc = null,$err = null)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $newPatient = 0;
@@ -31,11 +32,11 @@ class PatientController extends AbstractController
         }
         if(!$err)
             $err = 1;
-        
-        $cabinets = $this->getDoctrine()
+
+        $cabinets = $doctrine
             ->getRepository(Cabinet::class)
-            ->getAll(); 
-        $utilisateurs = $this->getDoctrine()->getRepository(Utilisateur::class)->getAll();
+            ->getAll();
+        $utilisateurs = $doctrine->getRepository(Utilisateur::class)->getAll();
 
         $isIn = 0;
         if(is_numeric($idc))   
@@ -50,7 +51,7 @@ class PatientController extends AbstractController
                 ]);
                 
         
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $doctrine->getManager();
         $form = $this->createForm(PatientType::class,$patient);
         $form->handleRequest($request);
         //dd($form->getData());
@@ -83,16 +84,16 @@ class PatientController extends AbstractController
      * @Route("/DeletePatient/{idc}/{id}", name="patient_delete_cabinet")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function deletePatient(Patient $patient,$idc = 0,Request $request )
+    public function deletePatient(ManagerRegistry $doctrine, Patient $patient,$idc = 0,Request $request )
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $doctrine->getManager();
         if(!$idc)
         {
             $session = $request->getSession();
             if(!count($patient->getConsultations()))
             {
-                $this->getDoctrine()
+                $doctrine
                 ->getRepository(Patient::class)
                 ->deletePatientById($entityManager,$patient->getId());
             }
@@ -104,7 +105,7 @@ class PatientController extends AbstractController
         }
         else
         {
-            $cabinet = $this->getDoctrine()
+            $cabinet = $doctrine
             ->getRepository(Cabinet::class)
             ->getOneById($idc);
             $cabinet[0]->removePatient($patient);

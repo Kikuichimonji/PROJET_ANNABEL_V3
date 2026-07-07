@@ -6,6 +6,7 @@ namespace App\Controller;
 use App\Entity\ConsultCalendar;
 use App\Form\ConsultCalendarType;
 use App\Repository\ConsultCalendarRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -39,7 +40,7 @@ class ConsultCalendarController extends AbstractController
     /**
      * @Route("/new", name="consult_calendar_new", methods={"GET","POST"})
      */
-    public function new(Request $request): Response
+    public function new(ManagerRegistry $doctrine, Request $request): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $consultCalendar = new ConsultCalendar();
@@ -47,7 +48,7 @@ class ConsultCalendarController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $doctrine->getManager();
             $entityManager->persist($consultCalendar);
             $entityManager->flush();
 
@@ -74,14 +75,14 @@ class ConsultCalendarController extends AbstractController
     /**
      * @Route("/{id}/edit", name="consult_calendar_edit", methods={"GET","POST"})
      */
-    public function edit(Request $request, ConsultCalendar $consultCalendar): Response
+    public function edit(ManagerRegistry $doctrine, Request $request, ConsultCalendar $consultCalendar): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $form = $this->createForm(ConsultCalendarType::class, $consultCalendar);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $doctrine->getManager()->flush();
 
             return $this->redirectToRoute('agenda_list');
         }
@@ -95,11 +96,11 @@ class ConsultCalendarController extends AbstractController
     /**
      * @Route("/{id}", name="consult_calendar_delete", methods={"DELETE"})
      */
-    public function delete(Request $request, ConsultCalendar $consultCalendar): Response
+    public function delete(ManagerRegistry $doctrine, Request $request, ConsultCalendar $consultCalendar): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         if ($this->isCsrfTokenValid('delete'.$consultCalendar->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $doctrine->getManager();
             $entityManager->remove($consultCalendar);
             $entityManager->flush();
         }
@@ -119,23 +120,23 @@ class ConsultCalendarController extends AbstractController
     /**
      * @Route("/save", name="consult_calendar_save", methods={"GET","POST"})
      */
-    public function save(Request $request): Response
+    public function save(ManagerRegistry $doctrine, Request $request): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-      
+
         $title = $request->request->get("title");
 
         $start= new \DateTime($request->request->get("start"));
         $end = new \DateTime($request->request->get("end"));
 
-      
+
         $consultCalendar = new ConsultCalendar();
         $consultCalendar->setTitle($title);
         $consultCalendar->setStartDate($start);
         $consultCalendar->setEndDate($end);
-        
-        
-        $entityManager = $this->getDoctrine()->getManager();
+
+
+        $entityManager = $doctrine->getManager();
         $entityManager->persist($consultCalendar);
         $entityManager->flush();
         
@@ -146,7 +147,7 @@ class ConsultCalendarController extends AbstractController
     /**
      * @Route("/modify/{id}", name="consult_calendar_modify", methods={"GET","POST"})
      */
-    public function modify(Request $request,ConsultCalendar $consultCalendar): Response
+    public function modify(ManagerRegistry $doctrine, Request $request,ConsultCalendar $consultCalendar): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $title = $request->request->get("title");
@@ -154,13 +155,13 @@ class ConsultCalendarController extends AbstractController
         $start= new \DateTime($request->request->get("start"));
         $end = new \DateTime($request->request->get("end"));
 
-      
+
         $consultCalendar->setTitle($title);
         $consultCalendar->setStartDate($start);
         $consultCalendar->setEndDate($end);
-        
-        
-        $entityManager = $this->getDoctrine()->getManager();
+
+
+        $entityManager = $doctrine->getManager();
         $entityManager->persist($consultCalendar);
         $entityManager->flush();
         

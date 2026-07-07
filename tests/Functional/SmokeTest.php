@@ -9,7 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\SchemaTool;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 /**
  * Filet de securite fonctionnel ajoute avant la migration Symfony 5.1 -> 7.x.
@@ -28,14 +28,14 @@ class SmokeTest extends WebTestCase
         self::ensureKernelShutdown();
         $client = static::createClient();
 
-        $this->entityManager = self::$container->get('doctrine')->getManager();
+        $this->entityManager = self::getContainer()->get('doctrine')->getManager();
 
         $metadata = $this->entityManager->getMetadataFactory()->getAllMetadata();
         $schemaTool = new SchemaTool($this->entityManager);
         $schemaTool->dropSchema($metadata);
         $schemaTool->createSchema($metadata);
 
-        $encoder = self::$container->get(UserPasswordEncoderInterface::class);
+        $passwordHasher = self::getContainer()->get(UserPasswordHasherInterface::class);
 
         $cabinet = new Cabinet();
         $cabinet->setLibelle('Cabinet Test');
@@ -44,7 +44,7 @@ class SmokeTest extends WebTestCase
         $admin = new Utilisateur();
         $admin->setUsername('smoke_admin');
         $admin->setRoles(['ROLE_ADMIN']);
-        $admin->setPassword($encoder->encodePassword($admin, 'smoke-test-password'));
+        $admin->setPassword($passwordHasher->hashPassword($admin, 'smoke-test-password'));
         $this->entityManager->persist($admin);
 
         $patient = new Patient();

@@ -6,6 +6,7 @@ use App\Entity\Cabinet;
 use App\Entity\Patient;
 use App\Data\SearchData;
 use App\Form\SearchType;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,12 +17,12 @@ class HomeController extends AbstractController
      * @Route("/accueil", name="home")
      * @Route("/accueil/{id}", name="home_detail")
      */
-    public function index(Cabinet $cabinet = null,Request $request)
+    public function index(ManagerRegistry $doctrine, Cabinet $cabinet = null,Request $request)
     {
         //Si l'utilisateur n'est pas autentifié il sera redirigé vers la page de connexion
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         //On récupère la liste de tout les cabinets
-        $cabinets = $this->getDoctrine()
+        $cabinets = $doctrine
             ->getRepository(Cabinet::class)
             ->getAll();
         
@@ -49,14 +50,14 @@ class HomeController extends AbstractController
         if($form->isSubmitted() && $form->isValid())
         {
             //On récupère la liste des patients qui corresponde aux critères
-            $patients = $this->getDoctrine()
+            $patients = $doctrine
                         ->getRepository(Patient::class)
                         ->getBySearch($data);
         }
         else
         {
             //Si il y a soucis avec le formulaire on renvoie la liste entière des patients
-            $patients = $this->getDoctrine()
+            $patients = $doctrine
             ->getRepository(Patient::class)
             ->getAll($data);
         }

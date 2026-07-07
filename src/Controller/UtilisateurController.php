@@ -4,11 +4,12 @@ namespace App\Controller;
 
 use App\Entity\Utilisateur;
 use App\Form\UtilisateurType;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UtilisateurController extends AbstractController
 {
@@ -16,11 +17,11 @@ class UtilisateurController extends AbstractController
      * @Route("/utilisateur", name="admin_utilisateur")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function index()
+    public function index(ManagerRegistry $doctrine)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        
-        $user = $this->getDoctrine()
+
+        $user = $doctrine
         ->getRepository(Utilisateur::class)
         ->getAll();
 
@@ -34,10 +35,10 @@ class UtilisateurController extends AbstractController
      * @Route("/utilisateur/edit/{id}", name="admin_edit_utilisateur")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function editUser(Utilisateur $user,Request $request,UserPasswordEncoderInterface $passwordEncoder)
+    public function editUser(ManagerRegistry $doctrine, Utilisateur $user,Request $request,UserPasswordHasherInterface $passwordHasher)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $doctrine->getManager();
 
         $form = $this->createForm(UtilisateurType::class,$user);
         $form->handleRequest($request);
@@ -45,7 +46,7 @@ class UtilisateurController extends AbstractController
         if($form->isSubmitted() && $form->isValid())
         {
             $user->setPassword(
-                $passwordEncoder->encodePassword(
+                $passwordHasher->hashPassword(
                     $user,
                     $form->get("password")->getData()
                 )
@@ -70,10 +71,10 @@ class UtilisateurController extends AbstractController
      * @Route("/utilisateur/delete/{id}", name="admin_delete_utilisateur")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function deleteUtilisateur(Utilisateur $user)
+    public function deleteUtilisateur(ManagerRegistry $doctrine, Utilisateur $user)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $doctrine->getManager();
         
         $entityManager->remove($user);
         $entityManager->flush();
