@@ -1,11 +1,4 @@
 @echo off
-tasklist /nh /fi "imagename eq laragon.exe" | find /i "laragon.exe" >nul && (
-echo Laragon is running
-) || (
-start C:\laragon\laragon.exe
-)
-start "" http://127.0.0.1:8000/
-symfony server:stop
-symfony serve
-
-pause>nul
+REM Laragon/symfony CLI ne sont plus necessaires : le serveur PHP integre suffit.
+REM Toute la logique de lancement (sans fenetre console, ouverture navigateur) est dans le .vbs.
+start "" wscript.exe "%~dp0Osteoclic.vbs"
