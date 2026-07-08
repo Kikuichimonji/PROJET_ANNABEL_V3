@@ -110,7 +110,7 @@
                                 <label>Numéro de chèque</label>
                                 <p>{{consult.vars.value.numeroCheque}}</p>
                             {% endif %}
-                            <button id='edit{{consult.id.vars.value}}' class="uk-button-default uk-button">Editer</button>
+                            <button id='edit{{consult.id.vars.value}}' class="btn-success">Editer</button>
                         </div>
                         <div id="input{{consult.id.vars.value}}">
                             {{ form_errors(consult) }}
@@ -119,7 +119,7 @@
                     </div>
                 </div>
             {% endfor %}
-            <button id='add' class="uk-button-secondary uk-button">Nouvelle séance</button>
+            <button id='add' class="btn-dark">Nouvelle séance</button>
         </div>
         <span id="error"></span>
     </div>
@@ -299,7 +299,7 @@
         {
             //creation du bouton de suppression
             let deleteButton = document.createElement("BUTTON")
-            deleteButton.className = "uk-button-danger buttonPadding"
+            deleteButton.className = "btn-danger buttonPadding"
             deleteButton.innerHTML = "Supprimer"
             
             
@@ -390,7 +390,7 @@
             //Creation du bouton Show/Hide et initialisation du statut
             let showButton = document.createElement("BUTTON")
             showButton.innerHTML ="Détails"
-            showButton.className = "uk-button-primary buttonPadding"
+            showButton.className = "btn-primary buttonPadding"
             showButton.statut = "hidden"
 
             //On cherche le block qu'on veut cacher et on y attache le bouton qui permet de le réafficher
