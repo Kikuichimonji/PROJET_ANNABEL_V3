@@ -3,56 +3,48 @@
 {% block title %}Login{% endblock %}
 
 {% block body %}
-<h1 class="uk-text-uppercase uk-heading-medium uk-text-center uk-margin-top" >OsteoClic</h1>
+<div id="loginWrap">
+    <h1>OsteoClic</h1>
 
-<form method="post" class="uk-position-center uk-form-stacked">
+    <form method="post" id="loginForm">
 
-    {% if app.user %}
-        <div class="">
-            You are logged in as {{ app.user.username }}, <a href="{{ path('app_logout') }}">Logout</a>
+        {% if app.user %}
+            <div>
+                You are logged in as {{ app.user.username }}, <a href="{{ path('app_logout') }}">Logout</a>
+            </div>
+        {% endif %}
+
+        <h2>Connexion</h2>
+
+        {% if error %}
+            <div id="loginError">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+        {% endif %}
+
+        <div class="loginField">
+            <label for="inputUsername">Nom d'utilisateur</label>
+            <input type="text" value="{{ last_username }}" name="username" id="inputUsername" required autofocus>
         </div>
-    {% endif %}
 
-    <h2 class="uk-text-center">Connexion</h2>
-
-    {% if error %}
-        <div class="uk-alert uk-text-danger uk-text-center">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-    {% endif %}
-
-    
-    
-    <div class="uk-margin uk-margin-medium-top">
-        <label class="uk-form-label" for="inputUsername">Nom d'utilisateur</label>
-        <div class="uk-form-controls uk-inline">
-            <span class="uk-form-icon" uk-icon="icon: user"></span>
-            <input class="uk-input uk-form-width-large" type="text" value="{{ last_username }}" name="username" id="inputUsername" required autofocus>
-            
+        <div class="loginField">
+            <label for="inputPassword">Mot de passe</label>
+            <input type="password" name="password" id="inputPassword" required>
         </div>
-    </div>
-    
-    <div class="uk-margin">
-        <label for="inputPassword" class="uk-form-label">Mot de passe</label>
-        <div class="uk-form-controls uk-inline">
-            <span class="uk-form-icon" uk-icon="icon: lock"></span>
-            <input type="password" name="password" id="inputPassword" class="uk-input uk-form-width-large" required>
+
+        <div class="loginField">
+            <label for="listCabinet">Veuillez choisir un cabinet</label>
+            <select name="cabinet" id="listCabinet" required>
+            {% for cabinet in cabinets %}
+                <option value="{{cabinet.id}}">{{cabinet.libelle}}</option>
+            {% endfor %}
+            </select>
         </div>
-    </div>
 
-    <div class="uk-margin">
-        <label for="listCabinet" class="uk-form-label">Veuillez choisir un cabinet</label>
-        <select name="cabinet" id="listCabinet" class="uk-select" Required>
-        {% for cabinet in cabinets %}
-            <option value="{{cabinet.id}}">{{cabinet.libelle}}</option>
-        {% endfor %}
-        </select>
-    </div>
+        <input type="hidden" name="_csrf_token"
+               value="{{ csrf_token('authenticate') }}">
 
-
-    <input type="hidden" name="_csrf_token"
-           value="{{ csrf_token('authenticate') }}">
-
-    <button class="uk-button uk-button-primary" type="submit">
-        Connection
-    </button>
-</form>
+        <button class="btn-primary" type="submit">
+            Connection
+        </button>
+    </form>
+</div>
 {% endblock %}

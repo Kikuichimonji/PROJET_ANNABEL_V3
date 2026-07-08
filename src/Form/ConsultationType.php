@@ -25,43 +25,41 @@ class ConsultationType extends AbstractType
             ->add('date_consult',DateType::class,[
                 'widget' => 'single_text',
                 "label" => "Date de consultation",
-                "attr" => ["class" => "uk-input consultReq"],
+                "attr" => ["class" => "consultReq"],
             ])
             ->add('anamnese',TextareaType::class,[
                 "required" => false,
-                "attr" => ["class" => "uk-textarea consultReq"],
+                "attr" => ["class" => "consultReq"],
                 "label" => "Anamnèse"
                 ])
             ->add('test',TextareaType::class,[
                 "required" => false,
-                "attr" => ["class" => "uk-textarea consultReq"],
+                "attr" => ["class" => "consultReq"],
                 ])
             ->add('traitement',TextareaType::class,[
                 "required" => false,
-                "attr" => ["class" => "uk-textarea consultReq"],
+                "attr" => ["class" => "consultReq"],
                 ])
             ->add('conseil',TextareaType::class,[
                 "required" => false,
-                "attr" => ["class" => "uk-textarea consultReq"],
+                "attr" => ["class" => "consultReq"],
                 ])
             ->add('note',TextareaType::class,[
                 "required" => false,
-                "attr" => ["class" => "uk-textarea consultReq"],
+                "attr" => ["class" => "consultReq"],
                 ])
             ->add('moyen_paiement',EntityType::class,[
-                    "attr" => ["class" => "consultRadioButton"],
                     'class' => MoyenPaiement::class,
                     'choice_label' => 'libelle',
                     'expanded' => true,
                     "label" => "Moyen de paiement",
                     ])
-                    
+
             ->add('montant',IntegerType::class,[
                 "required" => false,
-                "attr" => ["class" => "uk-input consultReq"],
+                "attr" => ["class" => "consultReq"],
                 ])
             ->add('numero_cheque',TextType::class,[
-                "attr" => ["class" => "uk-input"],
                 "required" => false,
                 "label" => "Numéro de chèque"
                 ])

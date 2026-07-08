@@ -19,15 +19,9 @@ class RegistrationFormType extends AbstractType
     {
         $builder
             ->add('username', TextType::class, [
-                "attr" => [
-                    "class" => "uk-input",
-                ],
                 "label" => "Nom d'utilisateur"
             ])
             ->add('password', PasswordType::class, [
-                "attr" => [
-                    "class" => "uk-input"
-                ],
                 "label" => "Mot de passe",
                 'mapped' => false,
                 'constraints' => [
@@ -37,9 +31,6 @@ class RegistrationFormType extends AbstractType
                 ],
             ])
             ->add('roles', ChoiceType::class, [
-                "attr" => [
-                    "class" => "uk-select",
-                ],
                 "label" => "Roles",
                 'choices' => [
                     'ADMIN' => 'ROLE_ADMIN',
@@ -49,7 +40,8 @@ class RegistrationFormType extends AbstractType
                 "expanded" => true
             ])
             ->add('submit', SubmitType::class, [
-                "label" => "Ajouter"
+                "label" => "Ajouter",
+                'attr' => ['class' => 'btn-primary']
             ])
             ;
     }

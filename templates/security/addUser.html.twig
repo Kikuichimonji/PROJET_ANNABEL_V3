@@ -4,11 +4,8 @@
 {% block nav %}{{ include('_nav.html.twig') }}{% endblock %}
 
 {% block body %}
+<div id="adminFormWrap">
     <h1>Ajout d'un nouvel utilisateur</h1>
-
-
     {{form(form)}}
-    
-
-  
+</div>
 {% endblock %}

@@ -4,5 +4,7 @@
 {% block nav %}{{ include('_nav.html.twig') }}{% endblock %}
 
 {% block body %}
-{{form(form)}}
+<div id="adminFormWrap">
+    {{form(form)}}
+</div>
 {% endblock %}

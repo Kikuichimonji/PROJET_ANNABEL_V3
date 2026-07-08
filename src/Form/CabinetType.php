@@ -14,11 +14,9 @@ class CabinetType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('libelle', TextType::class,[
-                "attr" => ["class" => "uk-input"]
-            ])
+            ->add('libelle', TextType::class)
             ->add("Enregistrer",SubmitType::class,[
-                'attr' => ['class' => 'uk-button uk-button-primary uk-margin-top uk-margin-bottom']
+                'attr' => ['class' => 'btn-primary']
             ])
         ;
     }
