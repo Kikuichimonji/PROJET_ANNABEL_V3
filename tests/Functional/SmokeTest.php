@@ -79,14 +79,6 @@ class SmokeTest extends WebTestCase
         $this->client->request('GET', '/accueil/' . $cabinetId);
         $this->assertResponseIsSuccessful();
 
-        // Note : la route "consult_calendar" (/agenda/calendar) existe mais n'est
-        // jamais atteignable ni liee depuis les templates : elle est masquee par
-        // "/agenda/{id}" (consult_show), declaree avant elle dans le controleur.
-        // Bug preexistant sans impact (aucun lien ne pointe vers cette route),
-        // hors perimetre de cette migration. Seule "agenda" (/agenda/) est reelle.
-        $this->client->request('GET', '/agenda/');
-        $this->assertResponseIsSuccessful();
-
         $this->client->request('GET', '/cabinet');
         $this->assertResponseIsSuccessful();
 
