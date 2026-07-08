@@ -5,31 +5,66 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>{% block title %}Bienvenu{% endblock %}</title>
         {% block stylesheets %}
-            <!-- UIkit CSS  -->
-           
-            <link rel="stylesheet" href="{{ asset('css/uikit.min.css') }}" />
             <link rel="stylesheet" href="{{ asset('css/style.css') }}">
-            <link rel="stylesheet" href="{{ asset('js/jquery-ui-1.12.1/jquery-ui.min.css') }}"></script>
-                   
-            
+            <link rel="stylesheet" href="{{ asset('js/jquery-ui-1.12.1/jquery-ui.min.css') }}">
+
             <style type="text/css">
             @font-face {
                 font-family: 'Roboto';
-                src: url({{ asset('font/Roboto-Regular.ttf') }}) format('sans-serif');
+                src: url({{ asset('font/Roboto-Regular.ttf') }}) format('truetype');
             }
             @font-face {
                 font-family: 'Noto Sans JP';
-                src: url({{ asset('font/NotoSansJP-Regular.otf') }}) format('sans-serif');
+                src: url({{ asset('font/NotoSansJP-Regular.otf') }}) format('opentype');
             }
             @font-face {
                 font-family: 'Noto Sans JP Medium';
-                src: url({{ asset('font/NotoSansJP-Medium.otf') }}) format('sans-serif');
+                src: url({{ asset('font/NotoSansJP-Medium.otf') }}) format('opentype');
+            }
+            @font-face {
+                font-family: 'Lora';
+                font-weight: 500;
+                src: url({{ asset('font/Lora-Medium.ttf') }}) format('truetype');
+            }
+            @font-face {
+                font-family: 'Lora';
+                font-weight: 600;
+                src: url({{ asset('font/Lora-SemiBold.ttf') }}) format('truetype');
+            }
+            @font-face {
+                font-family: 'Lora';
+                font-weight: 700;
+                src: url({{ asset('font/Lora-Bold.ttf') }}) format('truetype');
+            }
+            @font-face {
+                font-family: 'Nunito Sans';
+                font-weight: 400;
+                src: url({{ asset('font/NunitoSans-Regular.ttf') }}) format('truetype');
+            }
+            @font-face {
+                font-family: 'Nunito Sans';
+                font-weight: 500;
+                src: url({{ asset('font/NunitoSans-Medium.ttf') }}) format('truetype');
+            }
+            @font-face {
+                font-family: 'Nunito Sans';
+                font-weight: 600;
+                src: url({{ asset('font/NunitoSans-SemiBold.ttf') }}) format('truetype');
+            }
+            @font-face {
+                font-family: 'Nunito Sans';
+                font-weight: 700;
+                src: url({{ asset('font/NunitoSans-Bold.ttf') }}) format('truetype');
+            }
+            @font-face {
+                font-family: 'Nunito Sans';
+                font-weight: 800;
+                src: url({{ asset('font/NunitoSans-ExtraBold.ttf') }}) format('truetype');
             }
             </style>
         {% endblock %}
     </head>
     <body>
-        <!--<main class="uk-container uk-container-large">-->
         <main>
             {% block nav %}
             {% endblock %}
@@ -37,13 +72,8 @@
             {% endblock %}
         </main>
         {% block javascripts %}
-            
-        
             <script src="{{ asset('js/jquery-3.5.1.min.js') }}"></script>
             <script src="{{ asset('js/jquery-ui-1.12.1/jquery-ui.min.js') }}"></script>
-            <!-- UIkit JS -->
-            <script src="{{ asset('js/uikit.min.js') }}"></script>
-            <script src="{{ asset('js/uikit-icons.min.js') }}"></script>
         {% endblock %}
     </body>
 </html>
