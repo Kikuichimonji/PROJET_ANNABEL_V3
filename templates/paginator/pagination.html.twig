@@ -1,0 +1,45 @@
+{% if pageCount > 1 %}
+    <nav class="pager">
+        {% if previous is defined %}
+            <a class="pager-link" rel="prev" href="{{ path(route, knp_pagination_query(query, previous, options)) }}">&lsaquo;&nbsp;Précédent</a>
+        {% else %}
+            <span class="pager-link pager-disabled">&lsaquo;&nbsp;Précédent</span>
+        {% endif %}
+
+        <span class="pager-pages">
+            {% if startPage > 1 %}
+                <a class="pager-page" href="{{ path(route, knp_pagination_query(query, 1, options)) }}">1</a>
+                {% if startPage == 3 %}
+                    <a class="pager-page" href="{{ path(route, knp_pagination_query(query, 2, options)) }}">2</a>
+                {% elseif startPage != 2 %}
+                    <span class="pager-ellipsis">&hellip;</span>
+                {% endif %}
+            {% endif %}
+
+            {% for page in pagesInRange %}
+                {% if page != current %}
+                    <a class="pager-page" href="{{ path(route, knp_pagination_query(query, page, options)) }}">{{ page }}</a>
+                {% else %}
+                    <span class="pager-page pager-current">{{ page }}</span>
+                {% endif %}
+            {% endfor %}
+
+            {% if pageCount > endPage %}
+                {% if pageCount > (endPage + 1) %}
+                    {% if pageCount > (endPage + 2) %}
+                        <span class="pager-ellipsis">&hellip;</span>
+                    {% else %}
+                        <a class="pager-page" href="{{ path(route, knp_pagination_query(query, pageCount - 1, options)) }}">{{ pageCount - 1 }}</a>
+                    {% endif %}
+                {% endif %}
+                <a class="pager-page" href="{{ path(route, knp_pagination_query(query, pageCount, options)) }}">{{ pageCount }}</a>
+            {% endif %}
+        </span>
+
+        {% if next is defined %}
+            <a class="pager-link" rel="next" href="{{ path(route, knp_pagination_query(query, next, options)) }}">Suivant&nbsp;&rsaquo;</a>
+        {% else %}
+            <span class="pager-link pager-disabled">Suivant&nbsp;&rsaquo;</span>
+        {% endif %}
+    </nav>
+{% endif %}

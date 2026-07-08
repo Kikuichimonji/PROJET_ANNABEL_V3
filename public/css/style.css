@@ -324,6 +324,27 @@ td {
   flex: 1;
 }
 
+.cabinetsChecks {
+  margin-bottom: 20px;
+}
+
+.cabinetsChecks > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.cabinetsChecks > div > div {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cabinetsChecks label {
+  font-weight: 400;
+  color: var(--color-text);
+}
+
 /* ============ TABLEAU PATIENTS ============ */
 
 #tdDelete {
@@ -344,6 +365,63 @@ td {
 
 .trClic:hover {
   background: var(--color-neutral-section);
+}
+
+/* ============ PAGINATION ============ */
+
+.pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 24px 0;
+  font-family: var(--font-body);
+}
+
+.pager-link, .pager-page {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 36px;
+  padding: 0 12px;
+  border-radius: var(--radius-pill);
+  color: var(--color-text-secondary);
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.pager-link {
+  color: var(--color-primary);
+}
+
+.pager-link:hover {
+  background: var(--color-primary-light);
+}
+
+.pager-disabled {
+  color: var(--color-text-faint);
+}
+
+.pager-pages {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pager-page:hover {
+  background: var(--color-neutral-section);
+}
+
+.pager-current {
+  background: var(--color-primary);
+  color: var(--color-surface);
+}
+
+.pager-ellipsis {
+  color: var(--color-text-faint);
+  padding: 0 4px;
 }
 
 /* ============ FICHE PATIENT / CONSULTATIONS ============ */
