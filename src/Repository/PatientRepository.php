@@ -176,23 +176,6 @@ class PatientRepository extends ServiceEntityRepository
         
     }
 
-    public function DeletePatientById($em,$id)
-    {
-        /*$query = $this->createQueryBuilder('p')
-        ->delete('patient','p')
-        ->where('p.id = id:')
-        ->setParameter("id", $patient)
-        ;*/
-        $query = $em->createQuery(
-            "DELETE 
-             FROM App\Entity\Patient p
-             WHERE p.id = :id"
-        );
-        $query->setParameter('id',$id);
-        
-        return $query->GetResult();
-    }
-
     public function getOneById($id)
     {
         $entityManager= $this->getEntityManager();

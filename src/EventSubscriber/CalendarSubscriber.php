@@ -36,7 +36,7 @@ class CalendarSubscriber implements EventSubscriberInterface
         // Change booking.beginAt by your start date property
         $consultCalendar = $this->CalendarRepository
             ->createQueryBuilder('consultCalendar')
-            ->where('consultCalendar.startDate BETWEEN :start and :end OR consultCalendar.endDate BETWEEN :start and :end')
+            ->where('consultCalendar.startDate BETWEEN :start and :end OR consultCalendar.endDate BETWEEN :start and :end OR (consultCalendar.startDate <= :start AND consultCalendar.endDate >= :end)')
             ->setParameter('start', $start->format('Y-m-d H:i:s'))
             ->setParameter('end', $end->format('Y-m-d H:i:s'))
             ->getQuery()

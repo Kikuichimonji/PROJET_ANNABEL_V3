@@ -4,9 +4,9 @@
 {% block body %}
 <div id="homeWraps">
 {% set error = app.request.query.get("err")%}
-    <div id="error">{% if error == 1 %}Ce cabinet n'existe pas 
+    <div id="error">{% if error == 1 %}Ce cabinet n'existe pas
                     {% elseif error == 2 %}Vous ne pouvez pas supprimer un patient qui a des consultations
-
+                    {% elseif error == 3 %}Ce cabinet n'existe pas, le patient n'a pas ete retire
                     {% endif %}
     </div>
 

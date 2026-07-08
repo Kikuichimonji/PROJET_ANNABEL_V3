@@ -90,9 +90,12 @@ class PatientController extends AbstractController
             $session = $request->getSession();
             if(!count($patient->getConsultations()))
             {
-                $doctrine
-                ->getRepository(Patient::class)
-                ->deletePatientById($entityManager,$patient->getId());
+                // Vide explicitement la relation ManyToMany : Doctrine ne nettoie
+                // la table de jointure patient_cabinet que si la collection a ete
+                // chargee/traitee, pas automatiquement au retrait de l'entite.
+                $patient->getCabinet()->clear();
+                $entityManager->remove($patient);
+                $entityManager->flush();
             }
             else
                 return $this->redirectToRoute("home_detail",[
@@ -105,6 +108,11 @@ class PatientController extends AbstractController
             $cabinet = $doctrine
             ->getRepository(Cabinet::class)
             ->getOneById($idc);
+            if(!count($cabinet))
+                return $this->redirectToRoute("home_detail",[
+                    "id" => $idc,
+                    "err" => 3
+                ]);
             $cabinet[0]->removePatient($patient);
             $entityManager->flush();
         }

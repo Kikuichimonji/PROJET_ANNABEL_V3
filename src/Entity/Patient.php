@@ -52,7 +52,7 @@ class Patient
     #[ORM\Column(type: 'text', nullable: true)]
     private $loisir;
 
-    #[ORM\OneToMany(targetEntity: Files::class, mappedBy: 'patient')]
+    #[ORM\OneToMany(targetEntity: Files::class, mappedBy: 'patient', cascade: ['remove'])]
     private $files;
 
     #[ORM\Column(type: 'datetime')]
