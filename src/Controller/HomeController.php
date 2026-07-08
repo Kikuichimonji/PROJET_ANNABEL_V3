@@ -16,7 +16,7 @@ class HomeController extends AbstractController
 {
     #[Route('/accueil', name: 'home')]
     #[Route('/accueil/{id}', name: 'home_detail')]
-    public function index(ManagerRegistry $doctrine, Request $request, #[MapEntity] Cabinet $cabinet = null)
+    public function index(ManagerRegistry $doctrine, Request $request, #[MapEntity(id: 'id')] Cabinet $cabinet = null)
     {
         //Si l'utilisateur n'est pas autentifié il sera redirigé vers la page de connexion
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');

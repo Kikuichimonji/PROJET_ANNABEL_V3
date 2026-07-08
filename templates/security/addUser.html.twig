@@ -1,23 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Ajout d'un utilisateur{% endblock %}
-{% block nav %}
-{% set class= "" %}
-{% if is_granted('ROLE_ADMIN') %}
-    {% set class= "admin" %}
-{% endif %}
-{% if app.session.get("cabinet").getId() is defined %}
-    {% set id= app.session.get("cabinet").getId() %}
-{% else %}
-    {% set id= 0 %}
-{% endif %}
-<nav id="navbar" class="uk-navbar-container" uk-navbar>
-    <div id="navbarCenter">
-        <a id="homeFull" href="{{path("home_detail",{"id":id})}}"><h1>Accueil</h1></a>
-        <a id="homeSmall" href="{{path("home_detail",{"id":id})}}"><span uk-icon="icon:home;ratio: 2"></span></a>
-    </div>
-</nav>
-{% endblock %}
+{% block nav %}{{ include('_nav.html.twig') }}{% endblock %}
 
 {% block body %}
     <h1>Ajout d'un nouvel utilisateur</h1>

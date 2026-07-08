@@ -1,18 +1,7 @@
 {% extends 'base.html.twig' %}
 {% block title %}Erreur 404{% endblock %}
 
-{% block nav %}
-{% set class= "" %}
-{% if is_granted('ROLE_ADMIN') %}
-    {% set class= "admin" %}
-{% endif %}
-<nav id="navbar" class="uk-navbar-container" uk-navbar>
-    <div id="navbarCenter">
-        <a id="homeFull" href="{{path("home_detail",{"id":app.session.get("cabinet").getId()})}}"><h1>Accueil</h1></a>
-        <a id="homeSmall" href="{{path("home_detail",{"id":app.session.get("cabinet").getId()})}}"><span uk-icon="icon:home;ratio: 2"></span></a>
-    </div>
-</nav>
-{% endblock %}
+{% block nav %}{{ include('_nav.html.twig') }}{% endblock %}
 {% block body %}
     <div id="customError">
         <h2>Cette page n'existe pas, veuillez retourner à l'acceuil</h2>

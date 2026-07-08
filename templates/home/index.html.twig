@@ -1,65 +1,6 @@
 {% extends 'base.html.twig' %}
 {% block title %}Accueil{% endblock %}
-{% block nav %}
-    {% set class= "" %}
-    {% if is_granted('ROLE_ADMIN') %}
-        {% set class= "admin" %}
-    {% endif %}
-<nav id="navbar" class="uk-navbar-container" uk-navbar>
-    <div id="navbarLeft">
-        <span id="cabinetFull">
-            <ul class="uk-navbar-nav">
-            {% for cabinet in cabinets %}
-                {% if app.session.get("cabinet") %}             
-                    {% if cabinet.id == app.session.get("cabinet").getId() %}
-                        <li class="uk-active">
-                    {% else %}
-                        <li>
-                    {% endif %}
-                        <a href="{{path("home_detail",{"id":cabinet.id})}}">{{cabinet.libelle |e}}</a>
-                    </li>
-                {% endif %}
-            {% endfor %}
-            </ul>
-        </span>
-        <span id="cabinetSmall">
-            <ul class="uk-navbar-nav">
-                <li>
-                    <a class="uk-navbar-toggle" href="#">
-                        <span uk-navbar-toggle-icon></span> <span class="uk-margin-small-left">Cabinets</span>
-                    </a>
-                    <div class="uk-navbar-dropdown">
-                        <ul class="uk-nav uk-navbar-dropdown-nav">
-                        {% for cabinet in cabinets %}
-                            {% if app.session.get("cabinet") %}             
-                                {% if cabinet.id == app.session.get("cabinet").getId() %}
-                                    <li class="uk-active">
-                                {% else %}
-                                    <li>
-                                {% endif %}
-                                    <a href="{{path("home_detail",{"id":cabinet.id})}}">{{cabinet.libelle |e}}</a>
-                                </li>
-                            {% endif %}
-                        {% endfor %}
-                        </ul>
-                    </div>
-                </li>
-                <li class="uk-active">
-                    <a href="#">{{app.session.get("cabinet").getLibelle()}}</a>
-                </li>
-            </ul>
-        </span>
-    </div>
-    <div id="navbarCenter">
-        <a id="homeFull" href="{{path("home_detail",{"id":app.session.get("cabinet").getId()})}}"><h1>Accueil</h1></a>
-        <a id="homeSmall" href="{{path("home_detail",{"id":app.session.get("cabinet").getId()})}}"><span uk-icon="icon:home;ratio: 2"></span></a>
-    </div>
-    <div id="navbarRight">
-        <span id="connect">Connecté en tant que : </span><span class="username {{class |e}}"> {{app.user.username |e}}</span>
-        <a href="{{path('app_logout')}}"><span uk-icon="icon:close; ratio: 1.5"></span></a>
-    </div>
-</nav>
-{% endblock %}
+{% block nav %}{{ include('_nav.html.twig', {'cabinets': cabinets}) }}{% endblock %}
 {% block body %}
 <div id="homeWraps">
 {% set error = app.request.query.get("err")%}

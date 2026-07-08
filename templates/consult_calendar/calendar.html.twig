@@ -1,24 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Agenda Consultation{% endblock %}
-{% block nav %}
-
-<nav class="uk-navbar-container" uk-navbar>
-    <div >
-        {% if app.session.get("cabinet") %}
-            <a class="uk-navbar-center" href="{{path("home_detail",{"id":app.session.get("cabinet").getId()})}}"><h1>Accueil<h1></a>
-        {% endif %}
-    </div>
-    {% set class= "" %}
-    {% if is_granted('ROLE_ADMIN') %}
-        {% set class= "admin" %}
-    {% endif %}
-    <div class="uk-navbar-right">
-        Connecté en tant que : <span class="username {{class}}"> {{app.user.username}}</span>
-        <a href="{{path('app_logout')}}"><span uk-icon="icon:close; ratio: 1.5"></span></a>
-    </div>
-</nav>
-{% endblock %}
+{% block nav %}{{ include('_nav.html.twig') }}{% endblock %}
 {% block body %}
     <h1>Agenda des consultations</h1>
 

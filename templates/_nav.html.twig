@@ -1,0 +1,67 @@
+{#
+    Barre de navigation partagee. Parametres optionnels a passer via include() :
+    - cabinets    : liste des cabinets a afficher dans le selecteur (uniquement page d'accueil)
+    - breadcrumb  : true pour afficher "Accueil - {cabinet}" au lieu du selecteur (fiche patient)
+#}
+{% set navClass = is_granted('ROLE_ADMIN') ? 'admin' : '' %}
+{% set currentCabinet = app.session.get('cabinet') %}
+{% set currentCabinetId = currentCabinet ? currentCabinet.getId() : 0 %}
+
+<nav id="navbar" class="uk-navbar-container" uk-navbar>
+    {% if cabinets is defined and cabinets %}
+        <div id="navbarLeft">
+            <span id="cabinetFull">
+                <ul class="uk-navbar-nav">
+                {% for cabinet in cabinets %}
+                    {% if currentCabinet %}
+                        <li class="{{ cabinet.id == currentCabinetId ? 'uk-active' : '' }}">
+                            <a href="{{ path('home_detail', {'id': cabinet.id}) }}">{{ cabinet.libelle|e }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                </ul>
+            </span>
+            <span id="cabinetSmall">
+                <ul class="uk-navbar-nav">
+                    <li>
+                        <a class="uk-navbar-toggle" href="#">
+                            <span uk-navbar-toggle-icon></span> <span class="uk-margin-small-left">Cabinets</span>
+                        </a>
+                        <div class="uk-navbar-dropdown">
+                            <ul class="uk-nav uk-navbar-dropdown-nav">
+                            {% for cabinet in cabinets %}
+                                {% if currentCabinet %}
+                                    <li class="{{ cabinet.id == currentCabinetId ? 'uk-active' : '' }}">
+                                        <a href="{{ path('home_detail', {'id': cabinet.id}) }}">{{ cabinet.libelle|e }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="uk-active">
+                        <a href="#">{{ currentCabinet ? currentCabinet.getLibelle()|e : '' }}</a>
+                    </li>
+                </ul>
+            </span>
+        </div>
+    {% elseif breadcrumb is defined and breadcrumb and currentCabinet %}
+        <div id="navbarLeft">
+            <ul class="uk-navbar-nav">
+                <li class="uk-active">
+                    <a href="{{ path('home_detail', {'id': currentCabinetId}) }}">Accueil - {{ currentCabinet.getLibelle()|e }}</a>
+                </li>
+            </ul>
+        </div>
+    {% endif %}
+    <div id="navbarCenter">
+        <a id="homeFull" href="{{ path('home_detail', {'id': currentCabinetId}) }}"><h1>Accueil</h1></a>
+        <a id="homeSmall" href="{{ path('home_detail', {'id': currentCabinetId}) }}"><span uk-icon="icon:home;ratio: 2"></span></a>
+    </div>
+    {% if app.user %}
+        <div id="navbarRight">
+            <span id="connect">Connecté en tant que : </span><span class="username {{ navClass }}"> {{ app.user.username|e }}</span>
+            <a href="{{ path('app_logout') }}"><span uk-icon="icon:close; ratio: 1.5"></span></a>
+        </div>
+    {% endif %}
+</nav>

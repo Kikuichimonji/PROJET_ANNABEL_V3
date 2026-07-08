@@ -17,7 +17,7 @@ class PatientController extends AbstractController
 {
     #[Route('/patient/{idc}', name: 'patient_add', defaults: ['_fragment' => 'consultation'])]
     #[Route('/patient/{idc}/{id}', name: 'patient_edit', defaults: ['_fragment' => 'consultation'])]
-    public function addPatient(ManagerRegistry $doctrine, Request $request, #[MapEntity] Patient $patient = null, $idc = null, $err = null)
+    public function addPatient(ManagerRegistry $doctrine, Request $request, #[MapEntity(id: 'id')] Patient $patient = null, $idc = null, $err = null)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $newPatient = 0;
