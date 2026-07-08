@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 {% block title %}Fiche patient{% endblock %}
-{% block nav %}{{ include('_nav.html.twig', {'breadcrumb': true}) }}{% endblock %}
+{% block nav %}{{ include('_nav.html.twig', {'cabinets': cabinets, 'centerTitle': (patient.nom ~ ' ' ~ patient.prenom)|trim}) }}{% endblock %}
 {% block body %}
 <div id="mainWraps">
 
@@ -90,25 +90,16 @@
                 <div class="consultblock" id="{{consult.id.vars.value}}">
                     <div id=""block{{consult.id.vars.value}}"">
                         <div id="label{{consult.id.vars.value}}">
-                            <label>Date de Consultation</label>
-                            <p>{{consult.vars.value.dateConsult| date("d/m/Y")}}</p>
-                            <label>Anamnèse</label>
-                            <p>{{consult.vars.value.anamnese |capitalize}}</p>
-                            <label>Test</label>
-                            <p>{{consult.vars.value.test |capitalize}}</p>
-                            <label>Traitement</label>
-                            <p>{{consult.vars.value.traitement |capitalize}}</p>
-                            <label>Conseil</label>
-                            <p>{{consult.vars.value.conseil |capitalize}}</p>
-                            <label>Note</label>
-                            <p>{{consult.vars.value.note |capitalize}}</p>
-                            <label>Moyen de paiement</label>
-                            <p>{{consult.vars.value.moyenPaiement.libelle |capitalize}}</p>
-                            <label>Montant</label>
-                            <p>{{consult.vars.value.montant}} €</p>
+                            <div class="consultField"><label>Date de Consultation</label><p>{{consult.vars.value.dateConsult| date("d/m/Y")}}</p></div>
+                            <div class="consultField"><label>Anamnèse</label><p>{{consult.vars.value.anamnese |capitalize}}</p></div>
+                            <div class="consultField"><label>Test</label><p>{{consult.vars.value.test |capitalize}}</p></div>
+                            <div class="consultField"><label>Traitement</label><p>{{consult.vars.value.traitement |capitalize}}</p></div>
+                            <div class="consultField"><label>Conseil</label><p>{{consult.vars.value.conseil |capitalize}}</p></div>
+                            <div class="consultField"><label>Note</label><p>{{consult.vars.value.note |capitalize}}</p></div>
+                            <div class="consultField"><label>Moyen de paiement</label><p>{{consult.vars.value.moyenPaiement.libelle |capitalize}}</p></div>
+                            <div class="consultField"><label>Montant</label><p>{{consult.vars.value.montant}} €</p></div>
                             {% if consult.vars.value.moyenPaiement.libelle=="Chèque" %}
-                                <label>Numéro de chèque</label>
-                                <p>{{consult.vars.value.numeroCheque}}</p>
+                                <div class="consultField"><label>Numéro de chèque</label><p>{{consult.vars.value.numeroCheque}}</p></div>
                             {% endif %}
                             <button id='edit{{consult.id.vars.value}}' class="btn-success">Editer</button>
                         </div>
@@ -299,7 +290,7 @@
         {
             //creation du bouton de suppression
             let deleteButton = document.createElement("BUTTON")
-            deleteButton.className = "btn-danger buttonPadding"
+            deleteButton.className = "consult-action-delete buttonPadding"
             deleteButton.innerHTML = "Supprimer"
             
             
@@ -390,7 +381,7 @@
             //Creation du bouton Show/Hide et initialisation du statut
             let showButton = document.createElement("BUTTON")
             showButton.innerHTML ="Détails"
-            showButton.className = "btn-primary buttonPadding"
+            showButton.className = "consult-action-details buttonPadding"
             showButton.statut = "hidden"
 
             //On cherche le block qu'on veut cacher et on y attache le bouton qui permet de le réafficher

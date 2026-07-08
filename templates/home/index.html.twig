@@ -11,78 +11,82 @@
     </div>
 
     <div id="aTop">
-        <a class="btn-primary" onclick="return checkCabinet()" href="{{path('patient_add',{'idc':app.session.get("cabinet").getId()})}}">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-            Ajouter un nouveau patient
+        <a class="add-link" onclick="return checkCabinet()" href="{{path('patient_add',{'idc':app.session.get("cabinet").getId()})}}">
+            <span class="add-link-icon">+</span>
+            Ajouter un patient
         </a>
         {% if is_granted('ROLE_ADMIN') %}
-                <a class="admin" href="{{path("admin_cabinet")}}">Editer les cabinets</a>
-                <a class="admin" href="{{path("admin_utilisateur")}}">Editer les utilisateurs</a>
-                <a class="admin" href="{{path("admin_statistiques")}}">Statistiques</a>
+            <div id="aTopAdminLinks">
+                <a class="adminLink" href="{{path("admin_cabinet")}}">Editer les cabinets</a>
+                <a class="adminLink" href="{{path("admin_utilisateur")}}">Editer les utilisateurs</a>
+                <a class="statsLink" href="{{path("admin_statistiques")}}">Statistiques</a>
+            </div>
         {% endif %}
     </div>
 
-    <h2>Liste des patients ({{patients.getTotalItemCount |e}})</h2>
+    <div id="homeHeading"><h2>Liste des patients ({{patients.getTotalItemCount |e}})</h2></div>
     {{ form_start(form) }}
         <div id ="searchWrap">
             {{ form_row(form.q) }}
+            <div class="cabinetsChecks">
+                {{ form_row(form.cabinets) }}
+            </div>
             <button type="submit" class="btn-primary">Rechercher</button>
         </div>
-        <div class="cabinetsChecks">
-            {{ form_row(form.cabinets) }}
-        </div>
     {{ form_end(form) }}
-    <table>
-        <thead>
-            <tr>
-                <th>Nom</th>
-                <th>Prenom</th>
-                {% if is_granted('ROLE_ADMIN') %}
-                <th>Telephone</th>
-                <th>Adresse</th>
-                {% endif %}
-                <th>Date de dernière consultation</th>
-                {% if is_granted('ROLE_ADMIN') %}
-                    <th>Suppression</th>
-                {% endif %}
-            </tr>
-        </thead>
-        <tbody>
-            {% for patient in patients %}
+    <div id="patientTableWrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Prenom</th>
+                    {% if is_granted('ROLE_ADMIN') %}
+                    <th>Telephone</th>
+                    <th>Adresse</th>
+                    {% endif %}
+                    <th>Dernière consultation</th>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <th></th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for patient in patients %}
 
-            <tr class="trClic" id="{{patient.id|e}}">
-                <td><a id="aClic{{patient.id|e}}" onclick="return checkCabinet()"
-                href="{{path('patient_edit',{'idc':app.session.get("cabinet").getId(),'id':patient.id})}}">{{patient.nom}}</a></td>
-                <td>{{patient.prenom|e}}</td>
-                {% if is_granted('ROLE_ADMIN') %}
-                    {% if patient.numFixe %}
-                        <td>{{patient.numFixe|e}}</td>
+                <tr class="trClic" id="{{patient.id|e}}">
+                    <td><a id="aClic{{patient.id|e}}" onclick="return checkCabinet()"
+                    href="{{path('patient_edit',{'idc':app.session.get("cabinet").getId(),'id':patient.id})}}">{{patient.nom}}</a></td>
+                    <td>{{patient.prenom|e}}</td>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        {% if patient.numFixe %}
+                            <td>{{patient.numFixe|e}}</td>
+                        {% else %}
+                            <td>{{patient.numPortable|e}}</td>
+                        {% endif %}
+                        <td>{{patient.adresse ~" "~ patient.codePostal ~" "~ patient.ville |e}}</td>
+                    {% endif %}
+                    {% if patient.GetLastConsultationDate %}
+                        {% set dateConsult =  patient.getLastConsultationDate %}
+                        {% set tdclass = "" %}
                     {% else %}
-                        <td>{{patient.numPortable|e}}</td>
+                        {% set dateConsult =  "Pas de consultation" %}
+                        {% set tdclass = "dimTD" %}
                     {% endif %}
-                    <td>{{patient.adresse ~" "~ patient.codePostal ~" "~ patient.ville |e}}</td>
-                {% endif %}
-                {% if patient.GetLastConsultationDate %}
-                    {% set dateConsult =  patient.getLastConsultationDate %}
-                    {% set tdclass = "" %}
-                {% else %}
-                    {% set dateConsult =  "Pas de consultation" %}
-                    {% set tdclass = "dimTD" %}
-                {% endif %}
-                    <td class="{{tdclass|e}}"><strong>{{dateConsult}}</strong></td>
-                {% if is_granted('ROLE_ADMIN') %}
-                    <td id="tdDelete">
-                    {% if not patient.GetLastConsultationDate %}
-                        <a class="admin" href="{{path('patient_delete_full',{'id':patient.id})}}">
-                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                        </a>
+                        <td class="{{tdclass|e}}"><span class="consultDate">{{dateConsult}}</span></td>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <td id="tdDelete">
+                        {% if not patient.GetLastConsultationDate %}
+                            <a class="admin" href="{{path('patient_delete_full',{'id':patient.id})}}">
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            </a>
+                        {% endif %}
+                        </td>
                     {% endif %}
-                    </td>
-                {% endif %}
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
     {{ knp_pagination_render(patients) }}
 </div>

@@ -1,9 +1,8 @@
 {#
     Barre de navigation partagee. Parametres optionnels a passer via include() :
-    - cabinets    : liste des cabinets a afficher dans le selecteur (uniquement page d'accueil)
-    - breadcrumb  : true pour afficher "Accueil - {cabinet}" au lieu du selecteur (fiche patient)
+    - cabinets    : liste des cabinets a afficher dans le selecteur (onglets a gauche)
+    - centerTitle : texte affiche au centre (nom du patient sur la fiche, sinon le nom de l'appli)
 #}
-{% set navClass = is_granted('ROLE_ADMIN') ? 'admin' : '' %}
 {% set currentCabinet = app.session.get('cabinet') %}
 {% set currentCabinetId = currentCabinet ? currentCabinet.getId() : 0 %}
 
@@ -15,7 +14,7 @@
                 {% for cabinet in cabinets %}
                     {% if currentCabinet %}
                         <li class="{{ cabinet.id == currentCabinetId ? 'uk-active' : '' }}">
-                            <a href="{{ path('home_detail', {'id': cabinet.id}) }}">{{ cabinet.libelle|e }}</a>
+                            <a href="{{ path('home_detail', {'id': cabinet.id}) }}">{{ cabinet.libelle|upper|e }}</a>
                         </li>
                     {% endif %}
                 {% endfor %}
@@ -46,27 +45,13 @@
                 </ul>
             </span>
         </div>
-    {% elseif breadcrumb is defined and breadcrumb and currentCabinet %}
-        <div id="navbarLeft">
-            <ul class="nav-cabinet-list">
-                <li class="uk-active">
-                    <a href="{{ path('home_detail', {'id': currentCabinetId}) }}">Accueil - {{ currentCabinet.getLibelle()|e }}</a>
-                </li>
-            </ul>
-        </div>
     {% endif %}
-    <div id="navbarCenter">
-        <a id="homeFull" href="{{ path('home_detail', {'id': currentCabinetId}) }}"><h1>Accueil</h1></a>
-        <a id="homeSmall" href="{{ path('home_detail', {'id': currentCabinetId}) }}">
-            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"></path><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"></path></svg>
-        </a>
-    </div>
+    <div id="navbarCenter">{{ centerTitle is defined and centerTitle ? centerTitle : 'OsteoClic' }}</div>
     {% if app.user %}
         <div id="navbarRight">
-            <span id="connect">Connecté en tant que : </span><span class="username {{ navClass }}"> {{ app.user.username|e }}</span>
-            <a href="{{ path('app_logout') }}" title="Se déconnecter">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </a>
+            <span id="connect">Connecté en tant que</span>
+            <span class="userBadge">{{ app.user.username|e }}</span>
+            <a id="logoutLink" href="{{ path('app_logout') }}" title="Se déconnecter">✕</a>
         </div>
     {% endif %}
 </nav>

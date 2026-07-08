@@ -1,8 +1,10 @@
 :root {
-  /* Couleurs */
+  /* Couleurs generales */
   --color-bg: oklch(94% 0.01 75);
   --color-surface: oklch(99% 0.004 75);
   --color-neutral-section: oklch(96% 0.01 75);
+  --color-zebra: oklch(97% 0.006 70);
+  --color-search-bg: oklch(97% 0.008 70);
 
   --color-text: oklch(25% 0.02 50);
   --color-text-secondary: oklch(30% 0.02 50);
@@ -15,16 +17,23 @@
   --color-primary: oklch(60% 0.12 35);
   --color-primary-dark: oklch(50% 0.13 35);
   --color-primary-light: oklch(94% 0.035 35);
+  --color-primary-text: oklch(50% 0.11 35);
 
   --color-success: oklch(56% 0.07 145);
   --color-success-dark: oklch(38% 0.05 145);
   --color-success-darker: oklch(35% 0.03 145);
   --color-success-light: oklch(94% 0.028 145);
+  --color-success-border: oklch(85% 0.03 145);
 
   --color-danger: oklch(56% 0.16 25);
   --color-danger-dark: oklch(42% 0.09 20);
   --color-danger-light: oklch(94% 0.032 20);
   --color-danger-border: oklch(85% 0.03 20);
+  --color-danger-expanded-bg: oklch(97% 0.015 20);
+
+  --color-antecedent-heading: oklch(40% 0.03 60);
+  --color-antecedent-label: oklch(45% 0.02 60);
+  --color-antecedent-border: oklch(88% 0.015 70);
 
   --color-info: oklch(50% 0.13 220);
 
@@ -34,8 +43,12 @@
 
   /* Formes */
   --radius-card: 24px;
+  --radius-table: 16px;
+  --radius-consult-card: 14px;
   --radius-input: 10px;
-  --radius-button: 12px;
+  --radius-btn-sm: 8px;
+  --radius-btn-md: 10px;
+  --radius-btn-lg: 12px;
   --radius-pill: 999px;
 
   /* Ombres */
@@ -105,20 +118,40 @@ table {
 
 th {
   text-align: left;
-  color: var(--color-text-muted);
+  color: var(--color-text-faint);
   font-family: var(--font-body);
-  font-weight: 700;
-  border-bottom: 1px solid var(--color-border);
-  padding: 10px 12px;
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0 20px 12px;
 }
 
 td {
-  border-bottom: 1px solid var(--color-border-light);
-  padding: 10px 12px;
+  padding: 16px 20px;
+  border-top: 1px solid var(--color-border-light);
+  font-size: 15px;
 }
 
 .hidden {
   display: none;
+}
+
+/* ============ PAGE / CARTE ============ */
+
+main {
+  padding: 40px 24px;
+  display: flex;
+  justify-content: center;
+}
+
+.page-card {
+  width: 100%;
+  max-width: 1360px;
+  background: var(--color-surface);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
 }
 
 /* ============ BOUTONS ============ */
@@ -132,11 +165,7 @@ td {
   align-items: center;
   gap: 6px;
   font-family: var(--font-body);
-  font-weight: 700;
-  font-size: 14px;
   border: none;
-  border-radius: var(--radius-pill);
-  padding: 10px 20px;
   cursor: pointer;
   text-decoration: none;
 }
@@ -144,6 +173,11 @@ td {
 .btn-primary {
   background: var(--color-primary);
   color: var(--color-surface);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.03em;
+  border-radius: var(--radius-btn-lg);
+  padding: 12px 26px;
 }
 
 .btn-primary:hover {
@@ -153,8 +187,12 @@ td {
 
 .btn-secondary {
   background: var(--color-surface);
-  color: var(--color-text);
+  color: var(--color-text-muted);
   border: 1px solid var(--color-border);
+  font-weight: 700;
+  font-size: 14px;
+  border-radius: var(--radius-btn-md);
+  padding: 8px 16px;
 }
 
 .btn-secondary:hover {
@@ -162,13 +200,25 @@ td {
 }
 
 .btn-dark {
-  background: var(--color-text);
+  background: var(--color-text-secondary);
   color: var(--color-surface);
+  font-weight: 700;
+  font-size: 14px;
+  border-radius: var(--radius-btn-md);
+  padding: 12px 24px;
+}
+
+.btn-dark:hover {
+  background: var(--color-text);
 }
 
 .btn-success {
   background: var(--color-success);
   color: var(--color-surface);
+  font-weight: 700;
+  font-size: 14px;
+  border-radius: var(--radius-btn-sm);
+  padding: 9px 22px;
 }
 
 .btn-success:hover {
@@ -178,10 +228,74 @@ td {
 .btn-danger {
   background: var(--color-danger);
   color: var(--color-surface);
+  font-weight: 700;
+  font-size: 14px;
+  border-radius: var(--radius-btn-sm);
+  padding: 9px 22px;
 }
 
 .btn-danger:hover {
   background: var(--color-danger-dark);
+}
+
+.add-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-primary);
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.add-link:hover {
+  color: var(--color-primary-dark);
+}
+
+.add-link-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-pill);
+  border: 2px solid currentColor;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.adminLink {
+  color: var(--color-success);
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.adminLink:hover {
+  color: var(--color-success-dark);
+}
+
+.statsLink {
+  color: var(--color-text-muted);
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.statsLink:hover {
+  color: var(--color-text);
+}
+
+.consult-action-details {
+  color: var(--color-info);
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.consult-action-delete {
+  color: var(--color-danger);
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
 }
 
 /* ============ NAVBAR ============ */
@@ -191,51 +305,72 @@ td {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  background: var(--color-surface);
+  padding: 26px 44px;
   border-bottom: 1px solid var(--color-border);
-  padding: 14px 32px;
   font-family: var(--font-body);
 }
 
-#navbarLeft, #navbarCenter, #navbarRight {
+#navbarLeft {
+  display: flex;
+  align-items: baseline;
+}
+
+#navbarCenter {
+  font-family: var(--font-heading);
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+#navbarRight {
   display: flex;
   align-items: center;
-  gap: 16px;
-}
-
-#navbarCenter h1 {
-  font-size: 20px;
-  margin: 0;
-}
-
-#navbar a {
-  color: var(--color-text-secondary);
-}
-
-#navbar .uk-active a {
-  font-weight: 800;
-  color: var(--color-primary);
-}
-
-#navbar .username {
+  gap: 10px;
+  font-size: 15px;
   color: var(--color-text-muted);
-}
-
-#navbar .admin {
-  color: var(--color-danger);
 }
 
 #connect {
-  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.userBadge {
+  background: var(--color-primary-light);
+  color: var(--color-primary-text);
+  font-weight: 700;
+  padding: 5px 14px;
+  border-radius: var(--radius-pill);
+}
+
+#logoutLink {
+  color: var(--color-text-faint);
+  font-size: 15px;
+}
+
+#logoutLink:hover {
+  color: var(--color-danger);
 }
 
 .nav-cabinet-list {
   display: flex;
-  align-items: center;
-  gap: 16px;
+  align-items: baseline;
+  gap: 28px;
   list-style: none;
   margin: 0;
   padding: 0;
+}
+
+.nav-cabinet-list li a {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.06em;
+  color: var(--color-text-faint);
+}
+
+.nav-cabinet-list li.uk-active a {
+  color: var(--color-text);
 }
 
 .nav-cabinet-dropdown-wrap {
@@ -274,13 +409,16 @@ td {
 }
 
 @media (max-width: 750px) {
-  #cabinetFull, #homeFull {
+  #cabinetFull {
     display: none;
+  }
+  #navbarCenter {
+    font-size: 20px;
   }
 }
 
 @media (min-width: 751px) {
-  #cabinetSmall, #homeSmall {
+  #cabinetSmall {
     display: none;
   }
 }
@@ -288,9 +426,7 @@ td {
 /* ============ LIEN TOP ============ */
 
 #homeWraps {
-  max-width: 1100px;
-  margin: 32px auto;
-  padding: 0 24px;
+  padding-bottom: 32px;
 }
 
 #aTop {
@@ -299,16 +435,34 @@ td {
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 12px;
-  margin-bottom: 20px;
+  padding: 20px 44px 0;
 }
 
-#aTop a {
-  font-weight: 700;
+#aTopAdminLinks {
+  display: flex;
+  gap: 28px;
 }
 
 #error {
   color: var(--color-danger);
   font-weight: 700;
+  padding: 12px 44px 0;
+}
+
+#error:empty {
+  display: none;
+}
+
+#homeHeading {
+  padding: 24px 44px 8px;
+}
+
+#homeHeading h2 {
+  display: inline-block;
+  font-size: 24px;
+  border-bottom: 2px solid var(--color-primary-light);
+  padding-bottom: 8px;
+  margin: 0;
 }
 
 /* ============ BARRE DE RECHERCHE ============ */
@@ -316,16 +470,17 @@ td {
 #searchWrap {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: 20px;
+  padding: 20px 44px;
+  flex-wrap: wrap;
 }
 
-#searchWrap input {
+#searchWrap input[type="text"] {
   flex: 1;
-}
-
-.cabinetsChecks {
-  margin-bottom: 20px;
+  min-width: 200px;
+  background: var(--color-search-bg);
+  border-radius: var(--radius-btn-lg);
+  padding: 12px 18px;
 }
 
 .cabinetsChecks > div {
@@ -341,11 +496,35 @@ td {
 }
 
 .cabinetsChecks label {
-  font-weight: 400;
-  color: var(--color-text);
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--color-text-muted);
 }
 
 /* ============ TABLEAU PATIENTS ============ */
+
+#patientTableWrap {
+  padding: 0 44px 32px;
+}
+
+#patientTableWrap table {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-table);
+  overflow: hidden;
+}
+
+#patientTableWrap thead {
+  background: var(--color-search-bg);
+}
+
+#patientTableWrap tbody tr:nth-child(even) {
+  background: var(--color-zebra);
+}
+
+#patientTableWrap td a {
+  color: var(--color-primary-text);
+  font-weight: 700;
+}
 
 #tdDelete {
   text-align: right;
@@ -359,12 +538,16 @@ td {
   color: var(--color-text-faint);
 }
 
+.consultDate {
+  font-weight: 600;
+}
+
 .trClic {
   cursor: pointer;
 }
 
 .trClic:hover {
-  background: var(--color-neutral-section);
+  background: var(--color-neutral-section) !important;
 }
 
 /* ============ PAGINATION ============ */
@@ -375,7 +558,7 @@ td {
   justify-content: center;
   gap: 8px;
   flex-wrap: wrap;
-  margin: 24px 0;
+  margin: 24px 0 0;
   font-family: var(--font-body);
 }
 
@@ -385,19 +568,18 @@ td {
   justify-content: center;
   min-width: 36px;
   height: 36px;
-  padding: 0 12px;
-  border-radius: var(--radius-pill);
-  color: var(--color-text-secondary);
+  padding: 0 16px;
+  border-radius: var(--radius-btn-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
   font-weight: 700;
   font-size: 14px;
 }
 
-.pager-link {
-  color: var(--color-primary);
-}
-
-.pager-link:hover {
-  background: var(--color-primary-light);
+.pager-link:hover,
+.pager-page:hover {
+  background: var(--color-neutral-section);
 }
 
 .pager-disabled {
@@ -407,16 +589,17 @@ td {
 .pager-pages {
   display: flex;
   align-items: center;
-  gap: 4px;
-}
-
-.pager-page:hover {
-  background: var(--color-neutral-section);
+  gap: 8px;
 }
 
 .pager-current {
+  border: none;
   background: var(--color-primary);
   color: var(--color-surface);
+}
+
+.pager-current:hover {
+  background: var(--color-primary);
 }
 
 .pager-ellipsis {
@@ -424,115 +607,263 @@ td {
   padding: 0 4px;
 }
 
-/* ============ FICHE PATIENT / CONSULTATIONS ============ */
+/* ============ FICHE PATIENT ============ */
 
-#mainWraps {
-  max-width: 1100px;
-  margin: 32px auto;
-  padding: 0 24px;
+#mainWraps form {
+  display: block;
 }
 
-#subWrap {
-  display: flex;
-  gap: 24px;
-  flex-wrap: wrap;
+#adminWrap, #globalAntWrap, #globalConsultWrap {
+  padding: 44px 64px;
 }
 
-.wraps {
-  width: 45%;
-  border-radius: var(--radius-card);
-  box-shadow: var(--shadow-card);
-  padding: 24px;
-  margin-bottom: 24px;
-}
-
-#adminWrap, .administratif {
-  background-color: var(--color-success-light);
-}
-
-#globalAntWrap, .antecedent {
-  background-color: var(--color-neutral-section);
-}
-
-.wrapsAnt, .subConsult {
-  border-radius: var(--radius-card);
-}
-
-#subAnt {
-  background-color: var(--color-surface);
-  border-radius: var(--radius-input);
-  padding: 16px;
-  margin-top: 16px;
-}
-
-#globalConsultWrap, .consultblock {
-  background-color: var(--color-danger-light);
-  border-radius: var(--radius-card);
-}
-
-.subConsultBlock {
-  border-radius: var(--radius-card);
-  box-shadow: var(--shadow-card);
-  padding: 24px;
-  margin-bottom: 24px;
+#adminWrap h2, #globalAntWrap h2, #globalConsultWrap h2 {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 28px;
 }
 
 .vLine {
-  border-left: 1px solid var(--color-border);
+  display: none;
 }
 
-.subConsult {
+/* --- ADMINISTRATIF (vert) --- */
+
+#adminWrap {
+  background-color: var(--color-success-light);
+}
+
+#adminWrap h2 {
+  color: var(--color-success-darker);
+}
+
+#subWrap {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px 48px;
+}
+
+#adminWrap .wraps {
+  display: contents;
+}
+
+#adminWrap label {
+  display: block;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--color-success-darker);
+  margin-bottom: 6px;
+  text-transform: none;
+}
+
+#adminWrap input,
+#adminWrap textarea,
+#adminWrap select {
+  width: 100%;
+  border-color: var(--color-success-border);
+}
+
+/* --- ANTECEDENTS (beige) --- */
+
+#globalAntWrap {
+  background-color: var(--color-neutral-section);
+}
+
+#globalAntWrap h2 {
+  color: var(--color-antecedent-heading);
+}
+
+#aWrapInsideAWrap #subWrap {
+  gap: 16px 48px;
+}
+
+#globalAntWrap .wraps {
+  display: contents;
+}
+
+#globalAntWrap label {
+  display: block;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--color-antecedent-label);
+  margin-bottom: 6px;
+  text-transform: none;
+}
+
+#globalAntWrap input,
+#globalAntWrap textarea,
+#globalAntWrap select {
+  width: 100%;
+  border-color: var(--color-antecedent-border);
+}
+
+#subAnt {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  margin-top: 8px;
+}
+
+.wrapsAnt label {
+  display: block;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--color-antecedent-label);
+  margin-bottom: 6px;
+}
+
+.wrapsAnt textarea {
+  width: 100%;
+  border-color: var(--color-antecedent-border);
+}
+
+/* --- CONSULTATIONS (corail) --- */
+
+#globalConsultWrap {
   background-color: var(--color-danger-light);
-  border-radius: 25px;
-  padding: 16px;
-  margin-top: 12px;
+}
+
+#globalConsultWrap h2 {
+  color: var(--color-danger-dark);
 }
 
 #consultation {
-  width: 700px;
+  width: 100%;
   max-width: 100%;
 }
 
-#add.btn-dark,
+.consultblock {
+  background: transparent;
+  border-radius: var(--radius-consult-card);
+  border: 1px solid var(--color-danger-border);
+  overflow: hidden;
+  margin-bottom: 18px;
+}
+
+.consultblock > div {
+  background: var(--color-surface);
+}
+
+.subConsult {
+  background-color: var(--color-danger-expanded-bg) !important;
+  border-radius: 0;
+  padding: 24px;
+  margin-top: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 40px;
+}
+
+.subConsult label {
+  display: block;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--color-danger-dark);
+  margin-bottom: 6px;
+  text-transform: none;
+}
+
+.subConsult input,
+.subConsult textarea,
+.subConsult select {
+  width: 100%;
+  border-color: oklch(88% 0.02 20);
+}
+
+.consultblock [id^="label"] {
+  padding: 24px;
+  background: var(--color-danger-expanded-bg);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 40px;
+  align-items: start;
+}
+
+.consultField label {
+  display: block;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--color-danger-dark);
+  margin-bottom: 4px;
+  text-transform: none;
+}
+
+.consultField p {
+  margin: 0;
+  font-size: 15px;
+  color: var(--color-text-secondary);
+}
+
+.consultblock [id^="label"] .btn-success {
+  grid-column: 1 / -1;
+  justify-self: start;
+}
+
+#error {
+  color: var(--color-danger);
+}
+
 #add {
-  background: var(--color-text);
-  color: var(--color-surface);
+  margin-top: 8px;
 }
 
 #submit {
-  margin-top: 16px;
+  padding: 28px 64px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+#submit .btn-primary {
+  padding: 14px 40px;
+  font-weight: 800;
+  font-size: 15px;
+  text-transform: uppercase;
 }
 
 .buttonPadding {
-  margin-left: 8px;
+  margin-left: 12px;
 }
 
 .spanDate {
   margin-left: 12px;
   color: var(--color-text-muted);
-  font-size: 14px;
+  font-size: 13px;
 }
 
 /* ============ PAGES ADMIN (CABINETS / UTILISATEURS) ============ */
 
 #adminListWrap {
-  max-width: 700px;
-  margin: 32px auto;
-  padding: 0 24px;
+  padding: 36px 44px;
 }
 
 #adminListWrap table {
   margin-top: 20px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-table);
+  overflow: hidden;
 }
 
-#adminListWrap td a {
-  color: var(--color-text-muted);
+#adminListWrap thead {
+  background: var(--color-search-bg);
+}
+
+#adminListWrap tbody tr:nth-child(even) {
+  background: var(--color-zebra);
+}
+
+.editIcon {
+  color: var(--color-success);
+}
+
+.deleteIcon {
+  color: var(--color-danger);
 }
 
 #adminFormWrap {
+  padding: 36px 44px;
   max-width: 500px;
-  margin: 32px auto;
-  padding: 0 24px;
 }
 
 #adminFormWrap div[id$="_roles"] {
@@ -555,11 +886,8 @@ td {
 
 #loginWrap {
   max-width: 420px;
-  margin: 64px auto;
-  padding: 32px;
-  background: var(--color-surface);
-  border-radius: var(--radius-card);
-  box-shadow: var(--shadow-card);
+  margin: 0 auto;
+  padding: 44px;
   text-align: center;
 }
 
@@ -596,9 +924,7 @@ td {
 /* ============ ERREUR PERSONNALISEE ============ */
 
 #customError {
-  max-width: 600px;
-  margin: 64px auto;
-  padding: 0 24px;
+  padding: 64px 44px;
   text-align: center;
 }
 

@@ -66,10 +66,12 @@
     </head>
     <body>
         <main>
-            {% block nav %}
-            {% endblock %}
-            {% block body %}
-            {% endblock %}
+            <div class="page-card">
+                {% block nav %}
+                {% endblock %}
+                {% block body %}
+                {% endblock %}
+            </div>
         </main>
         {% block javascripts %}
             <script src="{{ asset('js/jquery-3.5.1.min.js') }}"></script>
