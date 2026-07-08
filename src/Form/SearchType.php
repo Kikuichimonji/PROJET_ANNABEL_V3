@@ -21,7 +21,6 @@ class SearchType extends AbstractType
                 'required' => false,
                 'attr' => [
                     "placeholder" => "Rechercher",
-                    "class" => "uk-input"
                 ]
             ])
             ->add("cabinets", EntityType::class, [
