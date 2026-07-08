@@ -85,6 +85,9 @@ class SmokeTest extends WebTestCase
         $this->client->request('GET', '/utilisateur');
         $this->assertResponseIsSuccessful();
 
+        $this->client->request('GET', '/statistiques');
+        $this->assertResponseIsSuccessful();
+
         $this->client->request('GET', '/files');
         $this->assertResponseIsSuccessful();
 
