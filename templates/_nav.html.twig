@@ -46,7 +46,7 @@
             </span>
         </div>
     {% endif %}
-    <div id="navbarCenter">{{ centerTitle is defined and centerTitle ? centerTitle : 'OsteoClic' }}</div>
+    <div id="navbarCenter"><a href="{{ path('home_detail', {'id': currentCabinetId}) }}">{{ centerTitle is defined and centerTitle ? centerTitle : 'OsteoClic' }}</a></div>
     {% if app.user %}
         <div id="navbarRight">
             <span id="connect">Connecté en tant que</span>

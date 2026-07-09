@@ -143,6 +143,7 @@ class PatientType extends AbstractType
                 'choice_label' => 'id',
                 'multiple'  => true,
                 'label' => false,
+                "attr" => ["class" => "hidden"],
             ])
 
             ->add('consultations', CollectionType::class, [

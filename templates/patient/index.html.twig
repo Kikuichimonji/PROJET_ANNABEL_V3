@@ -88,7 +88,15 @@
             data-idUtilisateur="{{ app.user.getId() |e }}">
             {% for consult in form.consultations %}
                 <div class="consultblock" id="{{consult.id.vars.value}}">
-                    <div id=""block{{consult.id.vars.value}}"">
+                    <div class="consultHeader">
+                        <span class="consultHeaderDate">{{consult.vars.value.dateConsult| date("d/m/Y")}}</span>
+                        <span class="consultHeaderMeta">par {{consult.vars.value.utilisateur.username|e}}{% if consult.vars.value.cabinet %} · {{consult.vars.value.cabinet.libelle|e}}{% endif %}</span>
+                        <div class="consultHeaderActions">
+                            <span class="consult-action-details">Détails</span>
+                            <span class="consult-action-delete">Supprimer</span>
+                        </div>
+                    </div>
+                    <div class="consultBody">
                         <div id="label{{consult.id.vars.value}}">
                             <div class="consultField"><label>Date de Consultation</label><p>{{consult.vars.value.dateConsult| date("d/m/Y")}}</p></div>
                             <div class="consultField"><label>Anamnèse</label><p>{{consult.vars.value.anamnese |capitalize}}</p></div>
@@ -103,7 +111,7 @@
                             {% endif %}
                             <button id='edit{{consult.id.vars.value}}' class="btn-success">Editer</button>
                         </div>
-                        <div id="input{{consult.id.vars.value}}">
+                        <div id="input{{consult.id.vars.value}}" class="subConsult">
                             {{ form_errors(consult) }}
                             {{ form_widget(consult) }}
                         </div>
@@ -204,24 +212,43 @@
                     let consultDiv = document.createElement('div')
                     consultDiv.className = "consultblock"
                     consultDiv.id = uniqueID
-                    //consultDiv.innerHTML = newConsultBlock
 
-                    //On l'intègre a la fin du block principal 
+                    //Entete harmonisee avec les consultations existantes (pas de date/utilisateur : pas encore enregistree)
+                    let newHeader = document.createElement('div')
+                    newHeader.className = "consultHeader"
+                    newHeader.innerHTML = '<span class="consultHeaderDate">Nouvelle séance</span>'
+                        + '<div class="consultHeaderActions"><span class="consult-action-delete">Supprimer</span></div>'
+                    consultDiv.append(newHeader)
+
+                    //On insère le prototype dans un block au meme style que le formulaire d'edition existant
+                    let newBody = document.createElement('div')
+                    newBody.className = "subConsult"
+                    newBody.innerHTML = newConsultBlock
+                    consultDiv.append(newBody)
+
+                    //On attache l'evenement de suppression au bouton statique de l'entete
+                    newHeader.querySelector(".consult-action-delete").addEventListener("click",function(event)
+                    {
+                        event.preventDefault()
+                        $("#delete").dialog({
+                                modal:true,
+                                buttons: {
+                                    Supprimer: function() {
+                                        $( this ).dialog( "close" );
+                                        consultDiv.remove()
+                                    },
+                                    Annuler: function() {
+                                        $( this ).dialog( "close" );
+                                    }
+                                }
+                            });
+                    })
+
+                    //On l'intègre a la fin du block principal
                     let consultation = document.getElementById("consultation")
                     consultation.append( consultDiv )
-
-                    //On insère le prototype dans le block créé 
-                    consulList = document.getElementsByClassName("consultblock")
-                    consulList[consulList.length -1].innerHTML = newConsultBlock
-                    
                     consultation.append(addButton)
-            
-                    //on insère le bouton de suppression à la fin
-                    putDeleteButton(consulList[consulList.length-1],uniqueID);
-                    
-                    //On attribue une classe au block de formulaire pour le css (sans les boutons de suppression et de visibilité)
-                    var subConsultBlock = document.getElementById(uniqueID).children[0]
-                    subConsultBlock.className="subConsult"
+
                     //On force le bon patient dans le selecteur d'objet patient du formulaire
                     idPatient= consultationBlock.dataset.patient
                     var selectPatient = document.getElementById("patient_consultations_"+uniqueID+"_patient");
@@ -242,7 +269,7 @@
                     var today = now.getFullYear()+"-"+(month)+"-"+(day) ;
 
                     dateConsultForm.value = today;
-
+                    
                     //On met en place les évenement des radio bouton
                     setupRadio(uniqueID)
 
@@ -252,7 +279,8 @@
                     if(idList.length > 1)
                     {
                         var previousBlock = idList[idList.length -2].id
-                        var previousBlockStyle = document.getElementById(previousBlock).children[0].style.display
+                        var previousBlockBody = document.getElementById(previousBlock).querySelector(".consultBody")
+                        var previousBlockStyle = previousBlockBody ? previousBlockBody.style.display : document.getElementById(previousBlock).children[0].style.display
                     }
                     else
                         previousBlockStyle = null
@@ -285,81 +313,54 @@
             }
         }
 
-        // Fonction permetant d'ajouter un bouton supression à la fin du formulaire de consultation
-        function putDeleteButton(form)
+        //Fonction permetant d'ouvrir/fermer l'accordeon d'un block consultation existant
+        function toggleConsultBody(id)
         {
-            //creation du bouton de suppression
-            let deleteButton = document.createElement("BUTTON")
-            deleteButton.className = "consult-action-delete buttonPadding"
-            deleteButton.innerHTML = "Supprimer"
-            
-            
-            //Le bouton est attaché à la fin du formulaire
-            form.append(deleteButton)
+            let body = document.getElementById(id).querySelector(".consultBody")
+            body.style.display = (body.style.display === "none") ? "block" : "none"
+        }
 
-            //On attache l'évenement click au bouton qui permetra de supprimer le formulaire
-            
-            deleteButton.addEventListener("click",function(event)
+        //Rend l'entete d'un block existant clickable (accordeon) et branche le bouton Supprimer statique
+        function bindExistingConsultHeader(consultblock)
+        {
+            let id = consultblock.id
+            let header = consultblock.querySelector(".consultHeader")
+            let deleteAction = consultblock.querySelector(".consult-action-delete")
+
+            header.addEventListener("click", function(event)
+            {
+                if(event.target.closest(".consult-action-delete"))
+                    return
+                toggleConsultBody(id)
+            })
+
+            deleteAction.addEventListener("click", function(event)
             {
                 event.preventDefault()
+                event.stopPropagation()
                 $("#delete").dialog({
                         modal:true,
                         buttons: {
                             Supprimer: function() {
                                 $( this ).dialog( "close" );
-                                form.remove()
+                                consultblock.remove()
                             },
                             Annuler: function() {
-                                $( this ).dialog( "close" );    
+                                $( this ).dialog( "close" );
                             }
                         }
-                    });      
-            });
-        }
-
-        //Fonction permetant de cacher et réafficher un block consultation
-        function hideShowBlock(event)
-        {
-            // but est le bouton d'affichage correspondant au bon block où l'on click
-            let but = event.currentTarget
-            event.preventDefault()
-            mainBlock = but.labelList.parentNode
-
-            //on verifie qu'il y a bien un statut puis on alterne entre afficher et cacher
-            if(but.statut)
-                if (but.statut == "hidden")
-                {
-                    but.statut = "shown"
-                    mainBlock.style.display = "block";
-                    but.innerHTML = "Cacher";
-                }  
-                else
-                {
-                    but.statut = "hidden"
-                    mainBlock.style.display = "none"
-                    but.innerHTML = "Détails";
-                }
+                    });
+            })
         }
 
         //Fonction non evenementielle permetant de cacher tout les blocks sauf la dernière consultation
         function hideBlock(id)
         {
-            
             var editButton = document.getElementById("edit"+id)
             editButton.addEventListener("click",editConsult)
 
-            //On cherche le block avec l'id reçue puis on le cache
-            var labelBlock = document.getElementById(id).children[0].children[0]
-            var inputBlock = document.getElementById(id).children[0].children[1]
-            var mainBlock = document.getElementById(id).children[0]
-
-            labelBlock.style.display = "initial"
-            inputBlock.style.display = "none"
-            mainBlock.style.display = "none"
-
-            //On lui donne une classe pour le CSS
-            mainBlock.className="subConsult"
-            
+            //On cache le corps (accordeon ferme), l'entete reste visible
+            document.getElementById(id).querySelector(".consultBody").style.display = "none"
 
             // On récupère la liste des consultations
             let idList = document.getElementsByClassName("consultblock")
@@ -376,37 +377,8 @@
 
             //Grâce à l'id suivante on scroll pour afficher la dernière
             let newblock = document.getElementById(newId)
-            newblock.scrollIntoView({behavior: "smooth"})
-            
-            //Creation du bouton Show/Hide et initialisation du statut
-            let showButton = document.createElement("BUTTON")
-            showButton.innerHTML ="Détails"
-            showButton.className = "consult-action-details buttonPadding"
-            showButton.statut = "hidden"
-
-            //On cherche le block qu'on veut cacher et on y attache le bouton qui permet de le réafficher
-            if(idList[index+1])
-            {
-                var show = idList[index]
-                show.append(showButton)
-            }
-            
-            //consultDate est la date de la consultation, pour mieux identifier le block
-            let consultDate = document.createElement("SPAN")
-        
-            //On recupère le champ texte qui contient le resultat de la propiété getTexte() pour la date et l'utilisateur
-            consultDate.innerHTML = inputBlock.querySelector("input[name$='[texte]']").value
-            consultDate.className = "spanDate"
-        
-            //On attache la date après le bouton 
-            show.append(consultDate)
-            
-            //On attache l'évènement d'alternance au bouton et on lui donne des paramètres facilement atteignable via l'évenement
-            showButton.inputList = inputBlock   
-            showButton.labelList = labelBlock  
-            showButton.addEventListener("click",hideShowBlock);
-            
-            
+            if(newblock)
+                newblock.scrollIntoView({behavior: "smooth"})
         }
 
         //fonction mettant en place les evenements des radio boutons de moyen de paiement, pour afficher ou cacher le numero de chèque  
@@ -478,10 +450,10 @@
             });
 
     
-            //On rajoute un bouton de suppresion a chaque block de consultation
+            //On branche l'accordeon (entete clickable) et le bouton Supprimer statique de chaque consultation existante
             let collectionForms = document.getElementsByClassName("consultblock")
             Array.prototype.forEach.call(collectionForms,function(forms){
-                putDeleteButton(forms)
+                bindExistingConsultHeader(forms)
             });
 
             /*let consultInput = document.getElementById("consultation")
@@ -505,13 +477,12 @@
                 {
                     if(i==counter-1)
                     {
-                        //on applique le CSS au dernier block visible
-                        var inputBlock = document.getElementById(idList[i].value).children[0].children[1]
-                        inputBlock.parentNode.className="subConsult"
-                        inputBlock.style.display= "none"
-                        let editButton = document.getElementById("edit"+idList[i].value)
+                        //le dernier block reste ouvert (accordeon deplie) sur le resume, formulaire d'edition cache
+                        let cid = idList[i].value
+                        document.getElementById("input"+cid).style.display = "none"
+                        let editButton = document.getElementById("edit"+cid)
                         editButton.addEventListener("click",editConsult)
-                    } 
+                    }
                     else  
                         hideBlock(idList[i].value)  //si le block n'est pas le dernier on le cache
                     
