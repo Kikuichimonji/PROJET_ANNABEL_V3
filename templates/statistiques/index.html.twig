@@ -1,7 +1,119 @@
 {% extends 'base.html.twig' %}
 {% block title %}Statistiques{% endblock %}
-{% block nav %}{{ include('_nav.html.twig') }}{% endblock %}
+{% block nav %}{{ include('_nav.html.twig', {'centerTitle': 'Statistiques'}) }}{% endblock %}
 {% block body %}
-<h1>Statistiques</h1>
-<p>Cette page sera completee apres la refonte visuelle de l'application.</p>
+<div id="statsWrap">
+
+    <div class="statsSection">
+        <h2>Vue d'ensemble</h2>
+        <div class="statTiles">
+            <div class="statTile">
+                <span class="statTileValue">{{ stats.totalPatients }}</span>
+                <span class="statTileLabel">Patients suivis</span>
+            </div>
+            <div class="statTile">
+                <span class="statTileValue">{{ stats.totalConsultations }}</span>
+                <span class="statTileLabel">Consultations enregistrées</span>
+            </div>
+            <div class="statTile">
+                <span class="statTileValue">{{ stats.consultationsCeMois }}</span>
+                <span class="statTileLabel">Consultations ce mois-ci</span>
+            </div>
+            <div class="statTile">
+                <span class="statTileValue">{{ stats.consultationsCetteAnnee }}</span>
+                <span class="statTileLabel">Consultations cette année</span>
+            </div>
+            <div class="statTile">
+                <span class="statTileValue">{{ stats.nouveauxPatientsCeMois }}</span>
+                <span class="statTileLabel">Nouveaux patients ce mois-ci</span>
+            </div>
+            <div class="statTile">
+                <span class="statTileValue">{{ stats.nouveauxPatientsCetteAnnee }}</span>
+                <span class="statTileLabel">Nouveaux patients cette année</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="statsSection">
+        <h2>Consultations par mois</h2>
+        <table class="statTable">
+            <thead>
+                <tr><th>Mois</th><th>Consultations</th></tr>
+            </thead>
+            <tbody>
+                {% for mois in stats.consultationsParMois %}
+                <tr>
+                    <td>{{ mois.label }}</td>
+                    <td>{{ mois.count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="statsSection">
+        <h2>Finances</h2>
+        <div class="statTiles">
+            <div class="statTile">
+                <span class="statTileValue">{{ stats.chiffreAffairesTotal|number_format(2, ',', ' ') }} €</span>
+                <span class="statTileLabel">Chiffre d'affaires total</span>
+            </div>
+            <div class="statTile">
+                <span class="statTileValue">{{ stats.chiffreAffairesCeMois|number_format(2, ',', ' ') }} €</span>
+                <span class="statTileLabel">Chiffre d'affaires du mois</span>
+            </div>
+            <div class="statTile">
+                <span class="statTileValue">{{ stats.totalImpaye|number_format(2, ',', ' ') }} €</span>
+                <span class="statTileLabel">Total impayé</span>
+            </div>
+        </div>
+        <table class="statTable">
+            <thead>
+                <tr><th>Moyen de paiement</th><th>Consultations</th><th>Montant</th></tr>
+            </thead>
+            <tbody>
+                {% for libelle, detail in stats.repartitionPaiement %}
+                <tr>
+                    <td>{{ libelle }}</td>
+                    <td>{{ detail.count }}</td>
+                    <td>{{ detail.montant|number_format(2, ',', ' ') }} €</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="statsSection">
+        <h2>Patients</h2>
+        <div class="statTiles">
+            <div class="statTile">
+                <span class="statTileValue">{{ stats.ageMoyen is not null ? stats.ageMoyen|number_format(1, ',', ' ') : '—' }}</span>
+                <span class="statTileLabel">Âge moyen</span>
+            </div>
+        </div>
+        <div class="statTablesRow">
+            <table class="statTable">
+                <thead>
+                    <tr><th>Tranche d'âge</th><th>Patients</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>0 – 17 ans</td><td>{{ stats.tranchesAge.enfants }}</td></tr>
+                    <tr><td>18 – 64 ans</td><td>{{ stats.tranchesAge.adultes }}</td></tr>
+                    <tr><td>65 ans et plus</td><td>{{ stats.tranchesAge.seniors }}</td></tr>
+                </tbody>
+            </table>
+            <table class="statTable">
+                <thead>
+                    <tr><th>Sexe</th><th>Patients</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Femmes</td><td>{{ stats.repartitionSexe.femmes }}</td></tr>
+                    <tr><td>Hommes</td><td>{{ stats.repartitionSexe.hommes }}</td></tr>
+                    <tr><td>Non renseigné</td><td>{{ stats.repartitionSexe.nonRenseigne }}</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
 {% endblock %}
