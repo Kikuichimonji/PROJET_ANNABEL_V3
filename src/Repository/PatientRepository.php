@@ -5,7 +5,6 @@ namespace App\Repository;
 use App\Entity\Cabinet;
 use App\Entity\Patient;
 use App\Data\SearchData;
-use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\Persistence\ManagerRegistry;
 use Knp\Component\Pager\PaginatorInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -68,112 +67,60 @@ class PatientRepository extends ServiceEntityRepository
 
     public function getBySearch(SearchData $data)
     {
-        // if(count($data->cabinets) > 100)
-        // {
-        //     $rsm = new ResultSetMapping();
-        //     $rsm->addEntityResult('App\Entity\Patient','p');
-        //     $rsm->addFieldResult('p', 'id', 'id');
-        //     $rsm->addFieldResult('p', 'nom', 'nom');
-        //     $rsm->addFieldResult('p', 'prenom', 'prenom');
-        //     $rsm->addFieldResult('p', 'num_fixe', 'numFixe');
-        //     $rsm->addFieldResult('p', 'num_portable', 'numPortable');
-        //     $rsm->addFieldResult('p', 'adresse', 'adresse');
-        //     $rsm->addFieldResult('p', 'code_postal', 'codePostal');
-        //     $rsm->addFieldResult('p', 'ville', 'ville');
+        $query = $this->createQueryBuilder("p");
 
-        //     $q ="SELECT p.id, p.nom, p.prenom, p.num_fixe, p.num_portable, p.adresse, p.code_postal, p.ville
-        //         FROM patient p
-        //         INNER JOIN patient_cabinet pc ON p.id = pc.patient_id
-        //         WHERE p.nom LIKE :q
-        //         OR p.prenom LIKE :q
-        //         OR p.num_fixe LIKE :q
-        //         OR p.num_portable LIKE :q
-        //         OR p.code_postal LIKE :q
-        //         OR p.adresse LIKE :q
-        //         OR p.ville LIKE :q
-        //         GROUP BY p.id";
-
-        //     $counter = 1;
-
-        //     foreach($data->cabinets as $cabinet)
-        //     {
-        //         $id = $cabinet->getId();
-        //         if($counter == 1)
-        //             $q= $q." HAVING GROUP_CONCAT(pc.cabinet_id) LIKE :id$id";
-        //         else
-        //             $q= $q." AND GROUP_CONCAT(pc.cabinet_id) LIKE :id$id";
-        //         $counter++;
-        //     }
-
-        //     $em = $this->getEntityManager();
-        //     $query = $em->createNativeQuery($q,$rsm);
-        //     foreach($data->cabinets as $cabinet)
-        //     {
-        //         $id = $cabinet->getId();
-        //         $query->setParameter("id$id", "%{$id}%");
-        //     }
-
-        //     $query->setParameter("q", "%{$data->q}%");
-        //     //return $query->getResult();
-        //     return $this->paginator->paginate(
-        //         $query->getResult(),
-        //         $data->page,
-        //         50
-        //  );
-        //}
-        //else
-       //{
-            if($data->cabinets)
-                $query = $this->createQueryBuilder("p")
-                ->select("c","p")
-                ->join("p.cabinet","c");
-            else
-                $query = $this->createQueryBuilder("p")
-                ->select("p");
-
-            if(!empty($data->q))
-            {
+        if(!empty($data->cabinets))
+        {
+            $ids = array_map(fn($cabinet) => $cabinet->getId(), $data->cabinets);
             $query = $query
-                    ->Where("p.nom LIKE :q")
-                    ->orWhere("p.prenom LIKE :q")
-                    ->orWhere("p.prenom LIKE :q")
-                    ->orWhere("p.numFixe LIKE :q")
-                    ->orWhere("p.numPortable LIKE :q")
-                    ->orWhere("p.codePostal LIKE :q")
-                    ->orWhere("p.adresse LIKE :q")
-                    ->orWhere("p.ville LIKE :q")
-                    ->setParameter("q", "%{$data->q}%");
-            };
-            if(!empty($data->cabinets))
-            {           
-                $id = $data->cabinets[0]->getId();
-                $q = "";
-                $nbcabinet = count($data->cabinets);
-                $i=0;
-                foreach($data->cabinets as $cabinet)
-                {
-                    $id = $cabinet->getId();
-                    if(++$i === $nbcabinet)
-                        $q= $q."c.id = :id$id";
-                    else
-                        $q= $q."c.id = :id$id or "; 
-                    $query = $query->setParameter("id$id", $id);
-                }
-                $query = $query
-                    ->andWhere($q);
-                
-            }
+                ->select("c","p")
+                ->join("p.cabinet","c")
+                ->andWhere($query->expr()->in("c.id", ":cabinetIds"))
+                ->setParameter("cabinetIds", $ids);
+        }
+        else
+            $query = $query->select("p");
 
-             $query = $query->getQuery();
-             
-             //return $query->getQuery()->GetResult();
-             return $this->paginator->paginate(
-                    $query,
-                    $data->page,
-                    10
-             );
-      // }
-        
+        $patients = $query->getQuery()->getResult();
+
+        if(!empty($data->q))
+        {
+            $needle = $this->normalizeForSearch($data->q);
+            $patients = array_values(array_filter($patients, function(Patient $p) use ($needle) {
+                foreach([$p->getNom(), $p->getPrenom(), $p->getNumFixe(), $p->getNumPortable(), $p->getCodePostal(), $p->getAdresse(), $p->getVille()] as $champ)
+                    if($champ !== null && str_contains($this->normalizeForSearch($champ), $needle))
+                        return true;
+                return false;
+            }));
+        }
+
+        return $this->paginator->paginate(
+            $patients,
+            $data->page,
+            10
+        );
+    }
+
+    /**
+     * Met en minuscule et retire les accents pour permettre une recherche
+     * insensible aux accents (ex: "elise" trouve "Élise") : SQLite n'a pas
+     * de collation accent-insensible comme MySQL, la comparaison est donc
+     * faite en PHP plutot qu'en SQL.
+     */
+    private function normalizeForSearch(string $value): string
+    {
+        $map = [
+            'à' => 'a', 'â' => 'a', 'ä' => 'a', 'á' => 'a', 'ã' => 'a',
+            'ç' => 'c',
+            'é' => 'e', 'è' => 'e', 'ê' => 'e', 'ë' => 'e',
+            'î' => 'i', 'ï' => 'i', 'í' => 'i', 'ì' => 'i',
+            'ô' => 'o', 'ö' => 'o', 'ó' => 'o', 'ò' => 'o',
+            'ù' => 'u', 'û' => 'u', 'ü' => 'u', 'ú' => 'u',
+            'ÿ' => 'y', 'ñ' => 'n',
+            'œ' => 'oe', 'æ' => 'ae',
+        ];
+
+        return strtr(mb_strtolower($value), $map);
     }
 
     public function getOneById($id)

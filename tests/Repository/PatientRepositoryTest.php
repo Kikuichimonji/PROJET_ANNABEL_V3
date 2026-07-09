@@ -51,6 +51,7 @@ class PatientRepositoryTest extends KernelTestCase
         $this->createPatient('Dupont', 'Alice', $utilisateur, [$this->cabinetA]);
         $this->createPatient('Martin', 'Bob', $utilisateur, [$this->cabinetA, $this->cabinetB]);
         $this->createPatient('Durand', 'Chloe', $utilisateur, [$this->cabinetB]);
+        $this->createPatient('Lajeunesse', 'Élise', $utilisateur, [$this->cabinetA]);
 
         $this->entityManager->flush();
     }
@@ -101,7 +102,17 @@ class PatientRepositoryTest extends KernelTestCase
     {
         $data = new SearchData();
 
-        $this->assertSame(['Dupont', 'Durand', 'Martin'], $this->names($this->repository->getBySearch($data)));
+        $this->assertSame(['Dupont', 'Durand', 'Lajeunesse', 'Martin'], $this->names($this->repository->getBySearch($data)));
+    }
+
+    public function testTextSearchIgnoresAccents(): void
+    {
+        // "elise" (sans accent) doit trouver "Élise" : SQLite n'a pas de collation
+        // accent-insensible comme MySQL, la comparaison est normalisee en PHP.
+        $data = new SearchData();
+        $data->q = 'elise';
+
+        $this->assertSame(['Lajeunesse'], $this->names($this->repository->getBySearch($data)));
     }
 
     public function testCabinetFilterAppliesAsAndNotAbsorbedByTextSearchOr(): void
@@ -113,7 +124,7 @@ class PatientRepositoryTest extends KernelTestCase
         $data = new SearchData();
         $data->cabinets = [$this->cabinetA];
 
-        $this->assertSame(['Dupont', 'Martin'], $this->names($this->repository->getBySearch($data)));
+        $this->assertSame(['Dupont', 'Lajeunesse', 'Martin'], $this->names($this->repository->getBySearch($data)));
     }
 
     public function testCabinetFilterCombinedWithTextSearch(): void
@@ -139,7 +150,7 @@ class PatientRepositoryTest extends KernelTestCase
         $data = new SearchData();
         $data->cabinets = [$this->cabinetA, $this->cabinetB];
 
-        $this->assertSame(['Dupont', 'Durand', 'Martin'], $this->names($this->repository->getBySearch($data)));
+        $this->assertSame(['Dupont', 'Durand', 'Lajeunesse', 'Martin'], $this->names($this->repository->getBySearch($data)));
     }
 
     protected function tearDown(): void
