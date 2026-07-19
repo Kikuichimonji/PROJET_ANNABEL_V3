@@ -718,7 +718,7 @@ main {
   display: grid;
   grid-template-columns: 1fr;
   gap: 20px;
-  margin-top: 8px;
+  margin-top: 45px;
 }
 
 .wrapsAnt label {

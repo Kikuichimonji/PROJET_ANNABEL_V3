@@ -43,6 +43,19 @@ If fso.FileExists("C:\laragon\bin\php\php-8.3.30-Win32-vs16-x64\php.exe") Then
     phpExe = "C:\laragon\bin\php\php-8.3.30-Win32-vs16-x64\php.exe"
 End If
 
+' --- PHP installe via winget (PHP.PHP.8.x), sous %LOCALAPPDATA%\Microsoft\WinGet\Packages ---
+If phpExe = "" Then
+    Dim wingetBase, wingetFolder
+    wingetBase = shell.ExpandEnvironmentStrings("%LOCALAPPDATA%") & "\Microsoft\WinGet\Packages"
+    If fso.FolderExists(wingetBase) Then
+        For Each wingetFolder In fso.GetFolder(wingetBase).SubFolders
+            If InStr(wingetFolder.Name, "PHP.PHP.") = 1 And fso.FileExists(wingetFolder.Path & "\php.exe") Then
+                phpExe = wingetFolder.Path & "\php.exe"
+            End If
+        Next
+    End If
+End If
+
 If phpExe = "" Then
     On Error Resume Next
     Dim whereResult : whereResult = shell.Exec("where php").StdOut.ReadAll()
