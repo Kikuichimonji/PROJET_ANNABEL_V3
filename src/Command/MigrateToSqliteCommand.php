@@ -56,7 +56,7 @@ class MigrateToSqliteCommand extends Command
             return Command::FAILURE;
         }
 
-        $mysql = DriverManager::getConnection(['url' => $sourceUrl]);
+        $mysql = DriverManager::getConnection(['url' => $sourceUrl, 'charset' => 'utf8mb4']);
 
         try {
             $orderedTables = $this->sortTablesByDependency($this->sqlite);
